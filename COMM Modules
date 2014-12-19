@@ -42,7 +42,7 @@
 
 //SLAVE
 
-#define MOTORX OUT_A												//Vul hier de goede poorten in
+#define MOTORX OUT_A												//Vul hier de gebruikte poorten in
 #define MOTORY OUT_B
 #define SENSORPRESSURE SENSOR_1
 SetSensorTouch(S1);
