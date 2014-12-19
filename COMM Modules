@@ -33,10 +33,10 @@
 
 //SLAVE
 
-#define MOTORX OUT_A															//Vul hier de goede poorten in
+#define MOTORX OUT_A																//Vul hier de goede poorten in
 #define MOTORY OUT_B
 #define SENSORPRESSURE SENSOR_1
-SetSensorTouch(SENSORPRESSURE);													//Werkt dit?
+SetSensorTouch(SENSORPRESSURE);															//Werkt dit?
 
 //Klemmotor
 	sub MotorX()
