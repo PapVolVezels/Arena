@@ -1,0 +1,56 @@
+//BLUETOOTH
+#define CONNECTION 1
+#define QUEUEMOTORX 1
+#define QUEUEMOTORY 2
+#define QUEUEPRESSURE 3
+#define QUEUECOMMAND 4
+
+//POORTEN
+#define MOTORX OUT_A
+#define MOTORY OUT_B
+#define SENSORPRESSURE SENSOR_1
+
+//Klemmotor
+	sub MotorX()
+	{
+		int vel;
+		ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
+		OnFwd(MOTORX, vel);
+	}
+
+//Gripmotor
+	sub MotorY()
+		{
+			int vel;
+			ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
+			OnFwd(MOTORY, vel);
+		}
+
+//Druksensor
+	sub DrukSensor()
+		{
+			int value;
+			value = SENSORPRESSURE;
+			SendResponseNumber(QUEUEPRESSURE, value);
+		}
+		
+//MiscCommando
+	sub Command1()
+		{
+		}
+		
+task main()
+	{
+		int commandnumber;
+		int resetcommand;
+		SetSensorTouch(S1);
+		while(true)
+			{
+				sub MotorY();
+				sub MotorX();
+				sub Druksensor;
+				if (commandnumber > 0){resetcommand = 1}
+				if (commandnumber == 0){resetcommand = 0}
+				if (commandnumber == 1 && resetcommand == 0){sub Command1}
+			}
+	}
