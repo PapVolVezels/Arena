@@ -11,7 +11,7 @@
 
 //SLAVE&&MASTER
 
-#define CONNECTION											//Vervang met de connectie die je instelt
+#define CONNECTION 1											//Vervang met de connectie die je instelt
 #define QUEUEMOTORX 1
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
