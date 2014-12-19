@@ -37,7 +37,6 @@
 //MiscCommando
 	sub Command1()
 		{
-		
 		}
 		
 task main()
