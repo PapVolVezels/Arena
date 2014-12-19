@@ -47,7 +47,7 @@ task main()
 		SetSensorTouch(S1);
 		while(true)
 			{
-				if (BluetoothStatus(CONNECTIE) != NO_ERR)
+				if (BluetoothStatus(CONNECTION) != NO_ERR)
 					{
 						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
 						Wait(1000);
