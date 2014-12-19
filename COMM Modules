@@ -1,8 +1,17 @@
-//Dit is een file voor alle voids, ints en macro's voor de communicatie tussen de stenen.
+/*Dit is een file voor alle voids, ints en macro's voor de communicatie tussen de stenen.
+ *Kopiëer deze modules aan het begin van het programma. Je kunt daarna de functies gebruiken in het programma.
+ *Zo roep je een sub op:
+ *	"sub naam(optionele waarde);"
+ *Zo roep je een int op:
+ *	"naam(optionele waarde);"
+ *Bij sommige functies kun je een of meerde waardes invoeren.
+ *Alleen sub MotorX en sub MotorY werken met waardes, je voert de snelheid in die je wilt.
+ *Je kunt ints gebruiken als een waarde.
+ */
 
-//ALGEMEEN
-//Gebruiken bij SLAVE&&MASTER
-#define CONNECTION																//Vervang met de connectie die je instelt
+//SLAVE&&MASTER
+
+#define CONNECTION													//Vervang met de connectie die je instelt
 #define QUEUEMOTORX 1
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
@@ -11,43 +20,43 @@
 
 //MASTER
 
-//Klemmotor
-	sub MotorX (vel)															//"vel" staat voor de opgegeven snelheid
+//Klemmotor															//Stel de klemmotor (MotorX) in op de snelheid waarde vel
+	sub MotorX (vel)												//"vel" staat voor de opgegeven snelheid
 		{
 			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
 		}
 
-//Gripmotor
+//Gripmotor															//Stel de gripmotor (MotorY) in op snelheid waarde vel
 	sub MotorY (vel)
 		{
 			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
 		}
 
-//Druksensor
+//Druksensor														//Lees de waarde van de Druksensor uit
 	int DrukSensor ()
 		{
-			int value;
+			int value;												//"value" staat voor de sensor waarde
 			ReceiveRemotenumber(QUEUEPRESSURE, true, value);
 			Return value;
 		}
 
 //SLAVE
 
-#define MOTORX OUT_A																//Vul hier de goede poorten in
+#define MOTORX OUT_A												//Vul hier de goede poorten in
 #define MOTORY OUT_B
 #define SENSORPRESSURE SENSOR_1
-SetSensorTouch(SENSORPRESSURE);															//Werkt dit?
+SetSensorTouch(S1);
 
 //Klemmotor
-	sub MotorX()
+	sub MotorX()													//Ontvang de verzochte snelheid voor de klemmotor (MotorX)
 		{
-			int vel;
+			int vel;												//"vel" en "value" betekenen hetzelfde als bij master
 			ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
 			OnFwd(MOTORX, vel);
 		}
 	
 //Gripmotor
-	sub MotorY()
+	sub MotorY()													//Ontvang de verzochte snelheid voor de klemmotor (MotorY)
 		{
 			int vel;
 			ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
@@ -55,7 +64,7 @@ SetSensorTouch(SENSORPRESSURE);															//Werkt dit?
 		}
 
 //Druksensor
-	sub DrukSensor()
+	sub DrukSensor()												//Stuur de waarde van Druksensor
 		{
 			int value;
 			value = SENSORPRESSURE;
