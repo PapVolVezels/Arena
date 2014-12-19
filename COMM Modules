@@ -1,0 +1,69 @@
+//Dit is een file voor alle voids, ints en macro's voor de communicatie tussen de stenen.
+
+//ALGEMEEN
+//Gebruiken bij SLAVE&&MASTER
+#define CONNECTION																//Vervang met de connectie die je instelt
+#define QUEUEMOTORX 1
+#define QUEUEMOTORY 2
+#define QUEUEPRESSURE 3
+#define QUEUECOMMAND 4
+
+
+//MASTER
+
+//Klemmotor
+	sub MotorX (vel)															//"vel" staat voor de opgegeven snelheid
+		{
+			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
+		}
+
+//Gripmotor
+	sub MotorY (vel)
+		{
+			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
+		}
+
+//Druksensor
+	int DrukSensor ()
+		{
+			int value;
+			ReceiveRemotenumber(QUEUEPRESSURE, true, value);
+			Return value;
+		}
+
+//SLAVE
+
+#define MOTORX OUT_A															//Vul hier de goede poorten in
+#define MOTORY OUT_B
+#define SENSORPRESSURE SENSOR_1
+SetSensorTouch(SENSORPRESSURE);													//Werkt dit?
+
+//Klemmotor
+	sub MotorX()
+		{
+			int vel;
+			ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
+			OnFwd(MOTORX, vel);
+		}
+	
+//Gripmotor
+	sub MotorY()
+		{
+			int vel;
+			ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
+			OnFwd(MOTORY, vel);
+		}
+
+//Druksensor
+	sub DrukSensor()
+		{
+			int value;
+			value = SENSORPRESSURE;
+			SendResponseNumber(QUEUEPRESSURE, value);
+		}
+
+
+
+
+
+
