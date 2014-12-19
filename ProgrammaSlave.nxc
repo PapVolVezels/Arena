@@ -12,11 +12,11 @@
 
 //Klemmotor
 	sub MotorX()
-	{
-		int vel;
-		ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
-		OnFwd(MOTORX, vel);
-	}
+		{
+			int vel;
+			ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
+			OnFwd(MOTORX, vel);
+		}
 
 //Gripmotor
 	sub MotorY()
