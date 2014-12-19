@@ -46,6 +46,8 @@
 #define MOTORY OUT_B
 #define SENSORPRESSURE SENSOR_1
 SetSensorTouch(S1);
+int command;
+int resetcommand;
 
 //Klemmotor
 	sub MotorX()											//Ontvang de verzochte snelheid voor de klemmotor (MotorX)
