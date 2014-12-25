@@ -18,6 +18,7 @@
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
 
+
 //Connectiestatus
 if (BluetoothStatus(CONNECTIE) != NO_ERR)
 	{
@@ -46,6 +47,14 @@ if (BluetoothStatus(CONNECTIE) != NO_ERR)
 			int value;									//"value" staat voor de sensor waarde
 			ReceiveRemotenumber(QUEUEPRESSURE, true, value);
 			Return value;
+		}
+
+//MiscCommando's
+	sub Commando1(int command)
+		{
+			SendRemoteNumber(CONNECTION, QUEUECOMMAND, command);
+			Wait(200);
+			SendRemoteNumber(CONNECTION, QUEUECOMMAND, 0);
 		}
 
 //SLAVE
