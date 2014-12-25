@@ -3,7 +3,7 @@
  *Zo roep je een sub op:
  *	"sub naam(optionele waarde);"
  *Zo roep je een int op:
- *	"naam(optionele waarde);"
+ *	"int naam(optionele waarde);"
  *Bij sommige functies kun je een of meerde waardes invoeren.
  *Alleen sub MotorX en sub MotorY werken met waardes, je voert de snelheid in die je wilt.
  *Je kunt ints gebruiken als een waarde.
@@ -88,6 +88,20 @@ int resetcommand;
 			int value;
 			value = SENSORPRESSURE;
 			SendResponseNumber(QUEUEPRESSURE, value);
+		}
+
+//MiscCommando's
+	sub GetCommand()
+		{
+			ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
+			if (commandnumber > 0){resetcommand = 1;}
+			if (commandnumber == 0){resetcommand = 0;}
+			if (commandnumber == 1 && resetcommand == 0){sub Command1();}
+		}
+		
+	sub Command1()
+		{
+			/*Schrijf hier een functie die je wil laten uitvoeren*/
 		}
 
 
