@@ -10,7 +10,7 @@
 #define MOTORY OUT_B
 #define SENSORPRESSURE SENSOR_1
 
-//MiscCommando'sVariables
+//Variable's voor commando's ontvangen
 int commandnumber;
 int resetcommand;
 
