@@ -29,13 +29,13 @@ if (BluetoothStatus(CONNECTIE) != NO_ERR)
 //MASTER
 
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
-	sub MotorX (vel)										//"vel" staat voor de opgegeven snelheid
+	sub MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
 		{
 			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
 		}
 
 //Gripmotor												//Stel de gripmotor (MotorY) in op snelheid waarde vel
-	sub MotorY (vel)
+	sub MotorY (int vel)
 		{
 			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
 		}
