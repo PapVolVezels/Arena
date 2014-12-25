@@ -39,6 +39,13 @@ int resetcommand;
 		}
 		
 //MiscCommando's
+	sub GetCommand()
+		{
+			ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
+			if (commandnumber > 0){resetcommand = 1;}
+			if (commandnumber == 0){resetcommand = 0;}
+			if (commandnumber == 1 && resetcommand == 0){sub Command1();}
+		}
 	sub Command1()
 		{
 			/*Schrijf hier een functie die je wil laten uitvoeren*/
@@ -57,9 +64,7 @@ task main()
     					}
 				sub MotorY();
 				sub MotorX();
-				sub Druksensor;
-				if (commandnumber > 0){resetcommand = 1;}
-				if (commandnumber == 0){resetcommand = 0;}
-				if (commandnumber == 1 && resetcommand == 0){sub Command1();}
+				sub Druksensor();
+				sub GetCommand();
 			}
 	}
