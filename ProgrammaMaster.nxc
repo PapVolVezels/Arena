@@ -53,7 +53,7 @@ task ConnectionChecker()
 		}
 
 //MiscCommando's
-	void Commando1(int command)
+	void SendCommand(int command)
 		{
 			SendRemoteNumber(CONNECTION, QUEUECOMMAND, command);
 			Wait(200);
