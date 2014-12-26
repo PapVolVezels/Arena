@@ -33,13 +33,13 @@ task ConnectionChecker()
 	}
 
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
-	sub MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
+	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
 		{
 			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
 		}
 
 //Gripmotor												//Stel de gripmotor (MotorY) in op snelheid waarde vel
-	sub MotorY (int vel)
+	void MotorY (int vel)
 		{
 			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
 		}
@@ -49,11 +49,11 @@ task ConnectionChecker()
 		{
 			int value;									//"value" staat voor de sensor waarde
 			ReceiveRemotenumber(QUEUEPRESSURE, true, value);
-			Return value;
+			return value;
 		}
 
 //MiscCommando's
-	sub Commando1(int command)
+	void Commando1(int command)
 		{
 			SendRemoteNumber(CONNECTION, QUEUECOMMAND, command);
 			Wait(200);
