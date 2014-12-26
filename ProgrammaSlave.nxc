@@ -17,7 +17,7 @@ int commandnumber;
 int resetcommand;
 
 //Klemmotor
-	sub MotorX()
+	void MotorX()
 		{
 			int vel;
 			ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
@@ -25,7 +25,7 @@ int resetcommand;
 		}
 
 //Gripmotor
-	sub MotorY()
+	void MotorY()
 		{
 			int vel;
 			ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
@@ -33,7 +33,7 @@ int resetcommand;
 		}
 
 //Druksensor
-	sub DrukSensor()
+	void DrukSensor()
 		{
 			int value;
 			value = SENSORPRESSURE;
@@ -41,14 +41,14 @@ int resetcommand;
 		}
 		
 //MiscCommando's
-	sub GetCommand()
+	void GetCommand()
 		{
 			ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
 			if (commandnumber > 0){resetcommand = 1;}
 			if (commandnumber == 0){resetcommand = 0;}
-			if (commandnumber == 1 && resetcommand == 0){sub Command1();}
+			if (commandnumber == 1 && resetcommand == 0){Command1();}
 		}
-	sub Command1()
+	void Command1()
 		{
 			/*Schrijf hier een functie die je wil laten uitvoeren*/
 		}
@@ -64,9 +64,9 @@ task main()
 						Wait(1000);
 						StopAllTasks();
     					}
-				sub MotorY();
-				sub MotorX();
-				sub Druksensor();
-				sub GetCommand();
+				MotorY();
+				MotorX();
+				Druksensor();
+				GetCommand();
 			}
 	}
