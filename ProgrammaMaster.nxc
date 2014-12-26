@@ -18,20 +18,6 @@
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
 
-//Connectiestatus
-task ConnectionChecker()
-	{
-		while(true)
-			{
-				if (BluetoothStatus(CONNECTIE) != NO_ERR)
-					{
-						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
-						Wait(1000);
-						StopAllTasks();
-					}
-			}
-	}
-
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
 	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
 		{
@@ -60,39 +46,21 @@ task ConnectionChecker()
 			SendRemoteNumber(CONNECTION, QUEUECOMMAND, 0);
 		}
 
-task STEEN_ONTWIJKEN();
-task anderekant();
-task lijnvolger();
-
-task main()
-{
-	Precedes(ConnectionChecker);
-     while(true)
-     {
-                SetSensorLight(SENSOR_1);
-                SetSensorLight(SENSOR_2);
-
-                if(SENSOR_1 <= zwart1)
-                {
-                            OnFwd(OUT_A,100);
-                            OnRev(OUT_C,100);
-                }
-                if(SENSOR_2 <= zwart2)
-                {
-                            OnFwd(OUT_C,100);
-                            OnRev(OUT_A,100);
-                }
-                if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2)
-                {
-                            Off(OUT_C);
-                }
-                if(DrukSensor() == 1)                                               //Touchsensor via de andere steen!!
-                {
-                            ExitTo(STEEN_ONTWIJKEN);
-                }
-    }
-}
- 
+//Connectiestatus
+task ConnectionChecker()
+	{
+		while(true)
+			{
+				if (BluetoothStatus(CONNECTIE) != NO_ERR)
+					{
+						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
+						Wait(1000);
+						StopAllTasks();
+					}
+			}
+	}
+	
+//Tasks
 task STEEN_ONTWIJKEN()
 {
      OnRev(motoren,100);
@@ -166,4 +134,39 @@ task anderekant()
 task lijnvolger()
 {
      OnRev(motoren,100);
+}
+
+//Task "Main"
+task begin
+{
+while(true)
+     {
+                SetSensorLight(SENSOR_1);
+                SetSensorLight(SENSOR_2);
+
+                if(SENSOR_1 <= zwart1)
+                {
+                            OnFwd(OUT_A,100);
+                            OnRev(OUT_C,100);
+                }
+                if(SENSOR_2 <= zwart2)
+                {
+                            OnFwd(OUT_C,100);
+                            OnRev(OUT_A,100);
+                }
+                if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2)
+                {
+                            Off(OUT_C);
+                }
+                if(DrukSensor() == 1)                                               //Touchsensor via de andere steen!!
+                {
+                            ExitTo(STEEN_ONTWIJKEN);
+                }
+    }
+}
+ 
+//Task voor het paralleliseren tasks
+task main()
+{
+	Precedes(ConnectionChecker, main);
 }
