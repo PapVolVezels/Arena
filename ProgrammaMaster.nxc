@@ -11,6 +11,55 @@
 #define halvedraai3 1700                                                        //getest snelheid van 40,80
 #define heledraai3 4150                                                         //getest snelheid van 40,80
 
+//Macro's voor connectie
+#define CONNECTION 1											     //Vervang met de connectie die je instelt
+#define QUEUEMOTORX 1
+#define QUEUEMOTORY 2
+#define QUEUEPRESSURE 3
+#define QUEUECOMMAND 4
+
+//Connectiestatus
+task ConnectionChecker()
+	{
+		while(true)
+			{
+				if (BluetoothStatus(CONNECTIE) != NO_ERR)
+					{
+						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
+						Wait(1000);
+						Stop(true);
+					}
+			}
+	}
+
+//Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
+	sub MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
+		{
+			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
+		}
+
+//Gripmotor												//Stel de gripmotor (MotorY) in op snelheid waarde vel
+	sub MotorY (int vel)
+		{
+			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
+		}
+
+//Druksensor												//Lees de waarde van de Druksensor uit
+	int DrukSensor ()
+		{
+			int value;									//"value" staat voor de sensor waarde
+			ReceiveRemotenumber(QUEUEPRESSURE, true, value);
+			Return value;
+		}
+
+//MiscCommando's
+	sub Commando1(int command)
+		{
+			SendRemoteNumber(CONNECTION, QUEUECOMMAND, command);
+			Wait(200);
+			SendRemoteNumber(CONNECTION, QUEUECOMMAND, 0);
+		}
+
 task STEEN_ONTWIJKEN();
 task anderekant();
 task lijnvolger();
@@ -36,7 +85,7 @@ task main()
                 {
                             Off(OUT_C);
                 }
-                if(SENSOR_3 == 1)                                               //Touchsensor via de andere steen!!
+                if(DrukSensor(); == 1)                                               //Touchsensor via de andere steen!!
                 {
                             ExitTo(STEEN_ONTWIJKEN);
                 }
