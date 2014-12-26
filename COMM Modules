@@ -2,12 +2,14 @@
  *Kopiëer deze modules aan het begin van het programma. Je kunt daarna de functies gebruiken in het programma.
  *Zo roep je een sub op:
  *	"sub naam(optionele waarde);"
- *Zo roep je een int op:
+ *Zo roep je een integerfunctie op:
  *	"int naam(optionele waarde);"
  *Bij sommige functies kun je een of meerde waardes invoeren.
  *Alleen sub MotorX en sub MotorY werken met waardes, je voert de snelheid in die je wilt.
  *Je kunt ints gebruiken als een waarde.
  */
+ 
+ /*Niets hiervan is gecompiled, zit dus boordenvol beestjes!!!*/
 
 //SLAVE&&MASTER
 
