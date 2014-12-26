@@ -137,7 +137,7 @@ task lijnvolger()
 }
 
 //Task "Main"
-task begin
+task begin()
 {
 while(true)
      {
