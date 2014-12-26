@@ -1,3 +1,5 @@
+/*Dit programma is gemaakt zonder compiler, en waarschijnlijk vol met bugs!!!*/
+
 //BLUETOOTH
 #define CONNECTION 1
 #define QUEUEMOTORX 1
