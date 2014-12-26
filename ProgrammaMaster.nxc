@@ -27,7 +27,7 @@ task ConnectionChecker()
 					{
 						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
 						Wait(1000);
-						Stop(true);
+						StopAllTasks(true);
 					}
 			}
 	}
@@ -66,6 +66,7 @@ task lijnvolger();
 
 task main()
 {
+	Precedes(ConnectionChecker);
      while(true)
      {
                 SetSensorLight(SENSOR_1);
@@ -85,7 +86,7 @@ task main()
                 {
                             Off(OUT_C);
                 }
-                if(DrukSensor(); == 1)                                               //Touchsensor via de andere steen!!
+                if(DrukSensor() == 1)                                               //Touchsensor via de andere steen!!
                 {
                             ExitTo(STEEN_ONTWIJKEN);
                 }
