@@ -29,6 +29,20 @@ if (BluetoothStatus(CONNECTIE) != NO_ERR)
 		Stop(true);
 	}
 
+//Connectiestatustask
+task ConnectionChecker()
+	{
+		while(true)
+			{
+				if (BluetoothStatus(CONNECTIE) != NO_ERR)
+					{
+						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
+						Wait(1000);
+						Stop(true);
+					}
+			}
+	}
+
 //MASTER
 
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
