@@ -27,7 +27,7 @@ task ConnectionChecker()
 					{
 						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
 						Wait(1000);
-						StopAllTasks(true);
+						StopAllTasks();
 					}
 			}
 	}
