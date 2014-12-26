@@ -62,7 +62,7 @@ task main()
 					{
 						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
 						Wait(1000);
-						Stop(true);
+						StopAllTasks();
     					}
 				sub MotorY();
 				sub MotorX();
