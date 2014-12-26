@@ -60,7 +60,7 @@ task ConnectionChecker()
 		{
 			int value;									//"value" staat voor de sensor waarde
 			ReceiveRemotenumber(QUEUEPRESSURE, true, value);
-			Return value;
+			return value;
 		}
 
 //MiscCommando's
