@@ -3,8 +3,8 @@
  *Zo roep je een functie op:
  *"naam(waarde);"
  *Bij sommige functies kun je een of meerde waardes invoeren.
- *Alleen sub MotorX en sub MotorY werken met waardes, je voert de snelheid in die je wilt.
- *Je kunt ints gebruiken als een waarde.
+ *Alleen sub MotorX, sub MotorY en Commando werken met waardes, je voert de snelheid in die je wilt.
+ *Je kunt intfuncties gebruiken als een waarde.
  */
  
  /*Niets hiervan is gecompiled, zit dus boordenvol beestjes!!!*/
@@ -64,7 +64,7 @@ task ConnectionChecker()
 		}
 
 //MiscCommando's
-	void Commando1(int command)
+	void SendCommand(int command)
 		{
 			SendRemoteNumber(CONNECTION, QUEUECOMMAND, command);
 			Wait(200);
