@@ -44,13 +44,13 @@ task ConnectionChecker()
 //MASTER
 
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
-	sub MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
+	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
 		{
 			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
 		}
 
 //Gripmotor												//Stel de gripmotor (MotorY) in op snelheid waarde vel
-	sub MotorY (int vel)
+	void MotorY (int vel)
 		{
 			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
 		}
@@ -64,7 +64,7 @@ task ConnectionChecker()
 		}
 
 //MiscCommando's
-	sub Commando1(int command)
+	void Commando1(int command)
 		{
 			SendRemoteNumber(CONNECTION, QUEUECOMMAND, command);
 			Wait(200);
@@ -81,7 +81,7 @@ int command;
 int resetcommand;
 
 //Klemmotor
-	sub MotorX()											//Ontvang de verzochte snelheid voor de klemmotor (MotorX)
+	void MotorX()											//Ontvang de verzochte snelheid voor de klemmotor (MotorX)
 		{
 			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
 			ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
@@ -89,7 +89,7 @@ int resetcommand;
 		}
 	
 //Gripmotor
-	sub MotorY()											//Ontvang de verzochte snelheid voor de klemmotor (MotorY)
+	void MotorY()											//Ontvang de verzochte snelheid voor de klemmotor (MotorY)
 		{
 			int vel;
 			ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
@@ -97,7 +97,7 @@ int resetcommand;
 		}
 
 //Druksensor
-	sub DrukSensor()										//Stuur de waarde van Druksensor
+	void DrukSensor()										//Stuur de waarde van Druksensor
 		{
 			int value;
 			value = SENSORPRESSURE;
@@ -105,15 +105,15 @@ int resetcommand;
 		}
 
 //MiscCommando's
-	sub GetCommand()
+	void GetCommand()
 		{
 			ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
 			if (commandnumber > 0){resetcommand = 1;}
 			if (commandnumber == 0){resetcommand = 0;}
-			if (commandnumber == 1 && resetcommand == 0){sub Command1();}
+			if (commandnumber == 1 && resetcommand == 0){Command1();}
 		}
 		
-	sub Command1()
+	void Command1()
 		{
 			/*Schrijf hier een functie die je wil laten uitvoeren*/
 		}
