@@ -24,7 +24,7 @@ if (BluetoothStatus(CONNECTIE) != NO_ERR)
 	{
 		TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
 		Wait(1000);
-		Stop(true);
+		StopAllTasks();
 	}
 
 //Connectiestatustask
@@ -36,7 +36,7 @@ task ConnectionChecker()
 					{
 						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
 						Wait(1000);
-						Stop(true);
+						StopAllTasks();
 					}
 			}
 	}
