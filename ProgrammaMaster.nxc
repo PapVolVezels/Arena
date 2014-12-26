@@ -165,7 +165,7 @@ while(true)
     }
 }
  
-//Task voor het paralleliseren tasks
+//Task voor het parallelliseren tasks
 task main()
 {
 	Precedes(ConnectionChecker, main);
