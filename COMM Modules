@@ -20,11 +20,14 @@
 
 
 //Connectiestatus
-if (BluetoothStatus(CONNECTIE) != NO_ERR)
+void CheckConnection()
 	{
-		TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
-		Wait(1000);
-		StopAllTasks();
+		if (BluetoothStatus(CONNECTIE) != NO_ERR)
+			{
+				TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
+				Wait(1000);
+				StopAllTasks();
+			}
 	}
 
 //Connectiestatustask
