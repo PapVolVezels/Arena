@@ -39,8 +39,12 @@ int resetcommand;
 			value = SENSORPRESSURE;
 			SendResponseNumber(QUEUEPRESSURE, value);
 		}
-		
+
 //MiscCommando's
+	void Command1()
+		{
+			/*Schrijf hier een functie die je wil laten uitvoeren*/
+		}
 	void GetCommand()
 		{
 			ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
@@ -48,11 +52,7 @@ int resetcommand;
 			if (commandnumber == 0){resetcommand = 0;}
 			if (commandnumber == 1 && resetcommand == 0){Command1();}
 		}
-	void Command1()
-		{
-			/*Schrijf hier een functie die je wil laten uitvoeren*/
-		}
-		
+
 task main()
 	{
 		SetSensorTouch(S1);
@@ -66,7 +66,7 @@ task main()
     					}
 				MotorY();
 				MotorX();
-				Druksensor();
+				DrukSensor();
 				GetCommand();
 			}
 	}
