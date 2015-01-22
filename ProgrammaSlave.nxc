@@ -10,7 +10,11 @@
 //POORTEN
 #define MOTORX OUT_A
 #define MOTORY OUT_B
-#define SENSORPRESSURE SENSOR_1
+
+int SENSORPRESSURE();
+{
+	return SENSOR_1;
+}
 
 //Variable's voor commando's ontvangen
 int commandnumber;
@@ -36,7 +40,7 @@ int resetcommand;
 	void DrukSensor()
 		{
 			int value;
-			value = SENSORPRESSURE;
+			value = SENSORPRESSURE();
 			SendResponseNumber(QUEUEPRESSURE, value);
 		}
 
