@@ -48,9 +48,9 @@ int resetcommand;
 	void GetCommand()
 		{
 			ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
-			if (commandnumber > 0){resetcommand = 1;}
-			if (commandnumber == 0){resetcommand = 0;}
-			if (commandnumber == 1 && resetcommand == 0){Command1();}
+			if (commandnumber > 0) resetcommand = 1;
+			if (commandnumber == 0) resetcommand = 0;
+			if (commandnumber == 1 && resetcommand == 0) Command1();
 		}
 
 task main()
