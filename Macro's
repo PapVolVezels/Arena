@@ -1,0 +1,9 @@
+# Arena
+#define kwartdraai OnRev(OUT_A,40); OnFwd(OUT_C,40); Wait(450);
+
+task main()
+{
+     OnRev(OUT_AC,50);
+     Wait(1000);
+     kwartdraai;
+}
