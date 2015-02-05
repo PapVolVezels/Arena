@@ -21,7 +21,7 @@ task main()
 
 
 #define zwart1 50
-#define lijnvolgerS1 OnRev(OUT_A,50); OnRev(OUT_C,100); if(SENSOR_1 <= zwart1) { OnFwd(OUT_A,50); OnRev(OUT_C,50); }
+#define lijnvolgerS1 OnRev(OUT_A,50); OnRev(OUT_C,50); if(SENSOR_1 <= zwart1) { OnFwd(OUT_A,50); OnRev(OUT_C,50); }
 
 task main()
 {
