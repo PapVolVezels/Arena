@@ -52,3 +52,8 @@ task main()
                 lijnvolgerS2
      }
 }
+
+
+
+
+#define beide_wit if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2) { OnRev(OUT_AC,50); }
