@@ -7,3 +7,12 @@ task main()
      Wait(1000);
      kwartdraai;
 }
+
+
+
+#define vooruit50 OnRev(OUT_AC,50);
+
+task main()
+{
+     vooruit50
+}
