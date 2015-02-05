@@ -34,3 +34,21 @@ task main()
                 lijnvolgerS1
      }
 }
+
+
+
+
+#define zwart2 55
+#define lijnvolgerS2 if(SENSOR_2 <= zwart2) { OnFwd(OUT_C,50); OnRev(OUT_A,50); }
+
+task main()
+{
+     SetSensorLight(IN_1);
+     SetSensorLight(IN_2);
+     SetSensorTouch(IN_3);
+
+     while(true)
+     {
+                lijnvolgerS2
+     }
+}
