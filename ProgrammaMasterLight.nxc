@@ -11,9 +11,6 @@
 #define halvedraai3 1700                                                        //getest snelheid van 40,80
 #define heledraai3 4150                                                         //getest snelheid van 40,80
 
-task anderekant();
-task lijnvolger();
-//Tasks
 task STEEN_ONTWIJKEN()
 {
      OnRev(motoren,100);
@@ -110,10 +107,11 @@ while(true)
                 {
                             Off(OUT_C);
                 }
-                if(DrukSensor() == 1)                                               //Touchsensor via de andere steen!!
+/*              if(DrukSensor() == 1)                                               //Touchsensor via de andere steen!!
                 {
                             ExitTo(STEEN_ONTWIJKEN);
                 }
+*/
     }
 }
 
