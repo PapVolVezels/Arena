@@ -1,4 +1,3 @@
-Enter file contents here
 #define zwart1 55
 #define zwart2 55
 #define motoren OUT_AC
