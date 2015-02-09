@@ -44,6 +44,7 @@ task ConnectionStatus()
 
 //MASTER
 
+#define CONNECTION 1											//Vul gebruikte connectie in 
 int sensortouchvalue;
 
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
@@ -85,6 +86,7 @@ int sensortouchvalue;
 
 //SLAVE
 
+#define CONNECTION 0											//Connectie van slave naar master is altijd 0
 #define MOTORX OUT_A											//Vul hier de gebruikte poorten in
 #define MOTORY OUT_B
 #define SENSORTOUCH SENSOR_1
