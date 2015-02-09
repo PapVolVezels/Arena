@@ -1,23 +1,18 @@
 /*Dit is een file voor alle functie's en macro's voor de communicatie tussen de stenen.
  *Kopiëer deze modules aan het begin van het programma. Je kunt daarna de functies gebruiken in het programma.
- *Zo roep je een functie op:
- *"naam(waarde);"
- *Bij sommige functies kun je een of meerde waardes invoeren.
+ *Bij sommige functies kun je één of meerdere parameters invoeren.
  *Alleen sub MotorX, sub MotorY en Commando werken met waardes, je voert de snelheid in die je wilt.
- *Je kunt intfuncties gebruiken als een waarde.
  */
  
  /*Niets hiervan is gecompiled, zit dus boordenvol beestjes!!!*/
 
 //SLAVE&&MASTER
 
-//Macro's voor connectie
-#define CONNECTION 1											//Vervang met de connectie die je instelt
+//Macro's
 #define QUEUEMOTORX 1
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
-
 
 //Connectiestatus
 void CheckConnection()
@@ -31,20 +26,25 @@ void CheckConnection()
 	}
 
 //Connectiestatustask
-task ConnectionChecker()
+task ConnectionStatus()
 	{
 		while(true)
 			{
-				if (BluetoothStatus(CONNECTIE) != NO_ERR)
+				if (BluetoothStatus(CONNECTION) != NO_ERR)
 					{
 						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
-						Wait(1000);
-						StopAllTasks();
 					}
+				else
+					{
+						TextOut(5,LCD_LINE2,"BT working correctly!");
+					}
+				Wait(10);
 			}
 	}
 
 //MASTER
+
+int sensortouchvalue;
 
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
 	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
@@ -59,18 +59,27 @@ task ConnectionChecker()
 		}
 
 //Druksensor												//Lees de waarde van de Druksensor uit
-	int DrukSensor ()
+	task DrukSensor ()
 		{
-			int value;									//"value" staat voor de sensor waarde
-			ReceiveRemotenumber(QUEUEPRESSURE, true, value);
-			return value;
+			int tempvalue;
+			char error;
+			while(true)									//"value" staat voor de sensor waarde
+				{
+					error = ReceiveRemoteNumber(QUEUEPRESSURE, true, tempvalue);
+					if(error == NULL)
+						{
+							sensortouchvalue = tempvalue;
+						}
+					Wait(10);
+					
+				}
 		}
 
 //MiscCommando's
 	void SendCommand(int command)
 		{
 			SendRemoteNumber(CONNECTION, QUEUECOMMAND, command);
-			Wait(200);
+			Wait(100);
 			SendRemoteNumber(CONNECTION, QUEUECOMMAND, 0);
 		}
 
@@ -78,7 +87,7 @@ task ConnectionChecker()
 
 #define MOTORX OUT_A											//Vul hier de gebruikte poorten in
 #define MOTORY OUT_B
-#define SENSORPRESSURE SENSOR_1
+#define SENSORTOUCH SENSOR_1
 SetSensorTouch(S1);
 int command;
 int resetcommand;
@@ -86,43 +95,55 @@ int resetcommand;
 //Klemmotor
 	void MotorX()											//Ontvang de verzochte snelheid voor de klemmotor (MotorX)
 		{
+			char error;
 			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
-			ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
-			OnFwd(MOTORX, vel);
+			while(true)
+				{
+					error = ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
+					if(error == NULL)
+						{
+							OnFwd(MOTORX, vel);
+							break;
+						}
+					else Wait(10);
+				}
 		}
 	
 //Gripmotor
 	void MotorY()											//Ontvang de verzochte snelheid voor de klemmotor (MotorY)
 		{
-			int vel;
-			ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
-			OnFwd(MOTORY, vel);
+			char error;
+			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
+			while(true)
+				{
+					error = ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
+					if(error == NULL)
+						{
+							OnFwd(MOTORY, vel);
+							break;
+						}
+					else Wait(10);
+				}
 		}
 
 //Druksensor
 	void DrukSensor()										//Stuur de waarde van Druksensor
 		{
 			int value;
-			value = SENSORPRESSURE;
+			value = SENSORTOUCH;
 			SendResponseNumber(QUEUEPRESSURE, value);
 		}
 
 //MiscCommando's
-	void GetCommand()
-		{
-			ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
-			if (commandnumber > 0){resetcommand = 1;}
-			if (commandnumber == 0){resetcommand = 0;}
-			if (commandnumber == 1 && resetcommand == 0){Command1();}
-		}
-		
 	void Command1()
 		{
 			/*Schrijf hier een functie die je wil laten uitvoeren*/
 		}
 
-
-
-
-
-
+	void GetCommand()
+		{
+			ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
+			if (commandnumber > 0)resetcommand = 1;
+			if (commandnumber == 0)resetcommand = 0;
+			if (commandnumber == 1 && resetcommand == 0)Command1();
+		}
