@@ -1,46 +1,69 @@
-/*Dit programma is gemaakt zonder compiler, en waarschijnlijk vol met bugs!!!*/
-
-//BLUETOOTH
-#define CONNECTION 0
+   //BTMacro's
 #define QUEUEMOTORX 1
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
+#define CONNECTION 0											//Connectie van slave naar master is altijd 0
 
-//POORTEN
-#define MOTORX OUT_A
+//MOTOR+SENSOR Macro's
+#define MOTORX OUT_A											//Vul hier de gebruikte poorten in
 #define MOTORY OUT_B
+#define SENSORTOUCH SENSOR_1
 
-int SENSORPRESSURE();
-{
-	return SENSOR_1;
-}
-
-//Variable's voor commando's ontvangen
+//Globale Variablen
 int commandnumber;
 int resetcommand;
 
+//Connectiestatus
+void CheckConnection()
+	{
+		if (BluetoothStatus(CONNECTION) != NO_ERR)
+			{
+				TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
+				Wait(1000);
+				StopAllTasks();
+			}
+	}
+
 //Klemmotor
-	void MotorX()
+	void MotorX()											//Ontvang de verzochte snelheid voor de klemmotor (MotorX)
 		{
-			int vel;
-			ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
-			OnFwd(MOTORX, vel);
+			char error;
+			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
+			while(true)
+				{
+					error = ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
+					if(error == NULL)
+						{
+							OnFwd(MOTORX, vel);
+							break;
+						}
+					else Wait(10);
+				}
 		}
 
 //Gripmotor
-	void MotorY()
+	void MotorY()											//Ontvang de verzochte snelheid voor de klemmotor (MotorY)
 		{
-			int vel;
-			ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
-			OnFwd(MOTORY, vel);
+			char error;
+			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
+			while(true)
+				{
+					error = ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
+					if(error == NULL)
+						{
+							OnFwd(MOTORY, vel);
+							break;
+						}
+					else Wait(10);
+				}
 		}
 
 //Druksensor
-	void DrukSensor()
+	void DrukSensor()										//Stuur de waarde van Druksensor
 		{
 			int value;
-			value = SENSORPRESSURE();
+			value = SENSORTOUCH;
 			SendResponseNumber(QUEUEPRESSURE, value);
 		}
 
@@ -49,28 +72,33 @@ int resetcommand;
 		{
 			/*Schrijf hier een functie die je wil laten uitvoeren*/
 		}
+
 	void GetCommand()
 		{
-			ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
-			if (commandnumber > 0) resetcommand = 1;
-			if (commandnumber == 0) resetcommand = 0;
-			if (commandnumber == 1 && resetcommand == 0) Command1();
+      char error;
+      error = ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
+      while(true)
+      {
+      if (error == NULL)
+      {
+	     if (commandnumber == 0)resetcommand = 0;
+       if (commandnumber > 0)resetcommand = 1;
+			 if (commandnumber == 1 && resetcommand == 0)Command1();
+			 break;
+			}
+			Wait(10);
+			}
 		}
 
-task main()
-	{
-		SetSensorTouch(S1);
-		while(true)
-			{
-				if (BluetoothStatus(CONNECTION) != NO_ERR)
-					{
-						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
-						Wait(1000);
-						StopAllTasks();
-    					}
-				MotorY();
-				MotorX();
-				DrukSensor();
-				GetCommand();
-			}
-	}
+task main();
+{
+ SetSensorTouch(S1);
+ CheckConnection();
+ while(true)
+ {
+  MotorX();
+  MotorY();
+  DrukSensor();
+  GetCommand();
+ }
+}
