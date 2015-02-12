@@ -1,4 +1,4 @@
-   //BTMacro's
+//BTMacro's
 #define QUEUEMOTORX 1
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
@@ -9,10 +9,6 @@
 #define MOTORX OUT_A											//Vul hier de gebruikte poorten in
 #define MOTORY OUT_B
 #define SENSORTOUCH SENSOR_1
-
-//Globale Variablen
-int commandnumber;
-int resetcommand;
 
 //Connectiestatus
 void CheckConnection()
@@ -67,38 +63,15 @@ void CheckConnection()
 			SendResponseNumber(QUEUEPRESSURE, value);
 		}
 
-//MiscCommando's
-	void Command1()
-		{
-			/*Schrijf hier een functie die je wil laten uitvoeren*/
-		}
-
-	void GetCommand()
-		{
-      char error;
-      error = ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
-      while(true)
-      {
-      if (error == NULL)
-      {
-	     if (commandnumber == 0)resetcommand = 0;
-       if (commandnumber > 0)resetcommand = 1;
-			 if (commandnumber == 1 && resetcommand == 0)Command1();
-			 break;
-			}
-			Wait(10);
-			}
-		}
 
 task main();
-{
- SetSensorTouch(S1);
- CheckConnection();
- while(true)
- {
-  MotorX();
-  MotorY();
-  DrukSensor();
-  GetCommand();
- }
-}
+	{
+		SetSensorTouch(S1);
+		CheckConnection();
+		while(true)
+			{
+			MotorX();
+			MotorY();
+			DrukSensor();
+			}
+	}
