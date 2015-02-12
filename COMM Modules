@@ -76,14 +76,6 @@ int sensortouchvalue;
 				}
 		}
 
-//MiscCommando's
-	void SendCommand(int command)
-		{
-			SendRemoteNumber(CONNECTION, QUEUECOMMAND, command);
-			Wait(100);
-			SendRemoteNumber(CONNECTION, QUEUECOMMAND, 0);
-		}
-
 //SLAVE
 
 #define CONNECTION 0											//Connectie van slave naar master is altijd 0
@@ -136,26 +128,3 @@ int resetcommand;
 			SendResponseNumber(QUEUEPRESSURE, value);
 		}
 
-//MiscCommando's
-	void Command1()
-		{
-			/*Schrijf hier een functie die je wil laten uitvoeren*/
-		}
-
-	void GetCommand()
-		{
-			int commandnumber;
-			char error;
-			error = ReceiveRemoteNumber(QUEUECOMMAND, true, commandnumber);
-			while(true)
-				{
-				if (error == NULL)
-					{
-					if (commandnumber == 0)resetcommand = 0;
-					if (commandnumber > 0)resetcommand = 1;
-					if (commandnumber == 1 && resetcommand == 0)Command1();
-					break;
-					}
-			Wait(10);
-			}
-		}
