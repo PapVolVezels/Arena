@@ -64,7 +64,7 @@ void CheckConnection()
 		}
 
 
-task main();
+task main()
 	{
 		SetSensorTouch(S1);
 		CheckConnection();
