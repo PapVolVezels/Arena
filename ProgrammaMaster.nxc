@@ -1,22 +1,56 @@
 #define zwart1 50
 #define zwart2 55
+#define kwartdraai OnRev(OUT_A,40); OnFwd(OUT_C,40); Wait(450);
+#define vooruit50 OnRev(OUT_AC,50);
+#define lijnvolgerS1 OnRev(OUT_A,50); OnRev(OUT_C,50); if(SENSOR_1 <= zwart1) { OnFwd(OUT_A,50); OnRev(OUT_C,50); }
+#define lijnvolgerS2 if(SENSOR_2 <= zwart2) { OnFwd(OUT_C,50); OnRev(OUT_A,50); }
+#define beide_wit if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2) { OnRev(OUT_AC,50); }
+#define zilver1 70
+#define zilver2 70
 #define motoren OUT_AC
-#define kwartdraai1 150                                                         //getest snelheid van 40
-#define halvedraai1 100                                                         //getest snelheid van 70
-#define heledraai1 300                                                          //getest snelheid van 100
-#define kwartdraai2 50                                                          //getest snelheid van 70
-#define halvedraai2 300                                                         //getest snelheid van 100
-#define heledraai2 1500                                                         //getest snelheid van 100
-#define kwartdraai3 400                                                         //getest snelheid van 40,80
-#define halvedraai3 1700                                                        //getest snelheid van 40,80
-#define heledraai3 4150                                                         //getest snelheid van 40,80
 
-//Macro's voor connectie
-#define CONNECTION 1											     //Vervang met de connectie die je instelt
+task steen_ontwijken();
+task anderekant();
+task lijnvolger();
+task blikje();
+
+/*Dit is een file voor alle functie's en macro's voor de communicatie tussen de stenen.
+ *Kopiëer deze modules aan het begin van het programma. Je kunt daarna de functies gebruiken in het programma.
+ *Bij sommige functies kun je één of meerdere parameters invoeren.
+ *Alleen sub MotorX, sub MotorY en Commando werken met waardes, je voert de snelheid in die je wilt.
+ */
+
+ /*Niets hiervan is gecompiled, zit dus boordenvol beestjes!!!*/
+
+//SLAVE&&MASTER
+
+//Macro's
 #define QUEUEMOTORX 1
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
+#define CONNECTION 1
+
+//Connectiestatustask
+task ConnectionStatus()
+	{
+		while(true)
+			{
+				if (BluetoothStatus(CONNECTION) != NO_ERR)
+					{
+						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
+					}
+				else
+					{
+						TextOut(5,LCD_LINE2,"BT working correctly!");
+					}
+				Wait(10);
+			}
+	}
+
+//MASTER
+
+int sensortouchvalue;
 
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
 	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
@@ -31,65 +65,80 @@
 		}
 
 //Druksensor												//Lees de waarde van de Druksensor uit
-	int DrukSensor ()
+	task DrukSensor ()
 		{
-			int value;									//"value" staat voor de sensor waarde
-			ReceiveRemoteNumber(QUEUEPRESSURE, true, value);
-			return value;
+			int tempvalue;
+			char error;
+			while(true)									//"value" staat voor de sensor waarde
+				{
+					error = ReceiveRemoteNumber(QUEUEPRESSURE, true, tempvalue);
+					if(error == NULL)
+						{
+							sensortouchvalue = tempvalue;
+						}
+					Wait(10);
+
+				}
 		}
 
-//MiscCommando's
-	void SendCommand(int command)
-		{
-			SendRemoteNumber(CONNECTION, QUEUECOMMAND, command);
-			Wait(200);
-			SendRemoteNumber(CONNECTION, QUEUECOMMAND, 0);
-		}
 
-//Connectiestatus
-task ConnectionChecker()
-	{
-		while(true)
-			{
-				if (BluetoothStatus(CONNECTION) != NO_ERR)
-					{
-						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
-						Wait(1000);
-						StopAllTasks();
-					}
-			}
-	}
 
-task anderekant();
-task lijnvolger();
-//Tasks
-task STEEN_ONTWIJKEN()
+task main()
 {
-     OnRev(motoren,100);
+     SetSensorLight(IN_1);
+     SetSensorLight(IN_2);
+     SetSensorTouch(IN_3);
+
+     while(true)
+     {
+                OnFwd(OUT_B,80);
+                OnRev(OUT_C,70);
+                OnRev(OUT_A,50);
+                if(SENSOR_1 <= zwart1)
+                {
+                            OnFwd(OUT_A,50);
+                            OnRev(OUT_C,70);
+                            OnFwd(OUT_B,40);
+                }
+                if(SENSOR_2 <= zwart2)
+                {
+                            OnFwd(OUT_C,70);
+                            OnRev(OUT_A,50);
+                            OnFwd(OUT_B,40);
+                }
+                if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2)
+                {
+                            Off(OUT_C);
+                }
+                if(sensortouchvalue == 1)                                               //Touchsensor via de andere steen!!
+                {
+                            ExitTo(steen_ontwijken);
+                }
+   }
+}
+
+task steen_ontwijken()
+{
+     OnFwd(OUT_AC,50);
      Wait(500);
-     if(SENSOR_3 <= 30)
-     {
-                 ExitTo(anderekant);
-     }
-     else
-     {
+
          OnRev(OUT_C,40);
          OnFwd(OUT_A,40);
-         Wait(kwartdraai1);
-         Off(motoren);
-         OnRev(motoren,100);
-         if(SENSOR_4 >= 20)
+         Wait(450);
+         Off(OUT_AC);
+         OnRev(OUT_AC,100);
+         if(SENSOR_4 <= 20)
          {
                      OnRev(OUT_C,40);
                      OnRev(OUT_A,80);
-                     Wait(kwartdraai3);
-                     OnRev(motoren,100);
+                     Wait(450);
+                     OnRev(OUT_AC,100);
          }
          if(SENSOR_4 >= 20)
          {
                      OnRev(OUT_C,40);
                      OnRev(OUT_A,80);
-                     Wait(kwartdraai3);
+                     Wait(450);
                      OnRev(motoren,100);
          }
          if(SENSOR_1 <= zwart1)
@@ -102,22 +151,21 @@ task STEEN_ONTWIJKEN()
                                  OnRev(OUT_A,100);
                                  ExitTo(lijnvolger);
                      }
-         }
-     }
+        }
 }
 
 task anderekant()
 {
      OnRev(OUT_A,40);
      OnFwd(OUT_C,40);
-     Wait(kwartdraai1);
+     Wait(450);
      Off(motoren);
      OnRev(motoren,100);
      if(SENSOR_3 <= 20)
      {
                  OnRev(OUT_A,40);
                  OnRev(OUT_C,80);
-                 Wait(kwartdraai3);
+                 Wait(450);
                  OnRev(motoren,100);
      }
      if(SENSOR_2 <= zwart2)
@@ -135,41 +183,35 @@ task anderekant()
 
 task lijnvolger()
 {
-     OnRev(motoren,100);
-}
-
-//Task "Main"
-task begin()
-{
 while(true)
      {
-                SetSensorLight(SENSOR_1);
-                SetSensorLight(SENSOR_2);
-
+                OnFwd(OUT_B,80);
+                OnRev(OUT_C,70);
+                OnRev(OUT_A,50);
                 if(SENSOR_1 <= zwart1)
                 {
-                            OnFwd(OUT_A,100);
-                            OnRev(OUT_C,100);
+                            OnFwd(OUT_A,50);
+                            OnRev(OUT_C,70);
+                            OnFwd(OUT_B,40);
                 }
                 if(SENSOR_2 <= zwart2)
                 {
-                            OnFwd(OUT_C,100);
-                            OnRev(OUT_A,100);
+                            OnFwd(OUT_C,70);
+                            OnRev(OUT_A,50);
+                            OnFwd(OUT_B,40);
                 }
                 if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2)
                 {
                             Off(OUT_C);
                 }
-                if(DrukSensor() == 1)                                               //Touchsensor via de andere steen!!
+                if(SENSOR_1 >= zilver1 && SENSOR_2 >= zilver2)
                 {
-                            ExitTo(STEEN_ONTWIJKEN);
+                            ExitTo(blikje);
                 }
-    }
+}
 }
 
-//Task voor het parallelliseren tasks
-task main()
+task blikje()
 {
-	Precedes(ConnectionChecker, main);
-}
 
+}
