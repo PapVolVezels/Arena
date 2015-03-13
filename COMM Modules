@@ -19,13 +19,14 @@ task ConnectionStatus()
 	{
 		while(true)
 			{
+				ClearLine(LCD_LINE2);
 				if (BluetoothStatus(CONNECTION) != NO_ERR)
 					{
-						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
+						TextOut(5,LCD_LINE2,"Bluetoetoeter!");
 					}
 				else
 					{
-						TextOut(5,LCD_LINE2,"BT working correctly!");
+						TextOut(5,LCD_LINE2,"BT working!");
 					}
 				Wait(10);
 			}
