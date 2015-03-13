@@ -14,17 +14,6 @@
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
 
-//Connectiestatus
-void CheckConnection()
-	{
-		if (BluetoothStatus(CONNECTION) != NO_ERR)
-			{
-				TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
-				Wait(1000);
-				StopAllTasks();
-			}
-	}
-
 //Connectiestatustask
 task ConnectionStatus()
 	{
@@ -83,23 +72,16 @@ int sensortouchvalue;
 #define MOTORY OUT_B
 #define SENSORTOUCH SENSOR_1
 SetSensorTouch(S1);
-int command;
-int resetcommand;
 
 //Klemmotor
 	void MotorX()											//Ontvang de verzochte snelheid voor de klemmotor (MotorX)
 		{
 			char error;
 			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
-			while(true)
+			error = ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
+			if(error == NULL)
 				{
-					error = ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
-					if(error == NULL)
-						{
-							OnFwd(MOTORX, vel);
-							break;
-						}
-					else Wait(10);
+					OnFwd(MOTORX, vel);
 				}
 		}
 	
@@ -109,14 +91,10 @@ int resetcommand;
 			char error;
 			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
 			while(true)
+			error = ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
+			if(error == NULL)
 				{
-					error = ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
-					if(error == NULL)
-						{
-							OnFwd(MOTORY, vel);
-							break;
-						}
-					else Wait(10);
+					OnFwd(MOTORY, vel);
 				}
 		}
 
@@ -127,4 +105,3 @@ int resetcommand;
 			value = SENSORTOUCH;
 			SendResponseNumber(QUEUEPRESSURE, value);
 		}
-
