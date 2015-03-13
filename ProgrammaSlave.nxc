@@ -11,6 +11,24 @@
 #define SENSORTOUCH SENSOR_1
 
 //Connectiestatus
+
+task ConnectionStatus()
+	{
+		while(true)
+			{
+				ClearLine(LCD_LINE2);
+				if (BluetoothStatus(CONNECTION) != NO_ERR)
+					{
+						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
+					}
+				else
+					{
+						TextOut(5,LCD_LINE2,"BT working...");
+					}
+				Wait(10);
+			}
+	}
+	
 void CheckConnection()
 	{
 		if (BluetoothStatus(CONNECTION) != NO_ERR)
@@ -27,14 +45,10 @@ void CheckConnection()
 			char error;
 			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
 			while(true)
+			error = ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
+			if(error == NULL)
 				{
-					error = ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
-					if(error == NULL)
-						{
-							OnFwd(MOTORX, vel);
-							break;
-						}
-					else Wait(10);
+					OnFwd(MOTORX, vel);
 				}
 		}
 
@@ -44,14 +58,10 @@ void CheckConnection()
 			char error;
 			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
 			while(true)
+			error = ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
+			if(error == NULL)
 				{
-					error = ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
-					if(error == NULL)
-						{
-							OnFwd(MOTORY, vel);
-							break;
-						}
-					else Wait(10);
+					OnFwd(MOTORY, vel);
 				}
 		}
 
@@ -68,6 +78,7 @@ task main()
 	{
 		SetSensorTouch(S1);
 		CheckConnection();
+		start ConnectionStatus;
 		while(true)
 			{
 			MotorX();
