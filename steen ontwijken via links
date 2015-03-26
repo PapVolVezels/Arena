@@ -1,0 +1,44 @@
+#define zwart1 50
+#define zwart2 55
+#define kwartdraai OnRev(OUT_A,40); OnFwd(OUT_C,40); Wait(750);
+#define vooruit50 OnRev(OUT_AC,50);
+#define lijnvolgerS1 OnRev(OUT_A,50); OnRev(OUT_C,50); if(SENSOR_1 <= zwart1) { OnFwd(OUT_A,50); OnRev(OUT_C,50); }
+#define lijnvolgerS2 if(SENSOR_2 <= zwart2) { OnFwd(OUT_C,50); OnRev(OUT_A,50); }
+#define beide_wit if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2) { OnRev(OUT_AC,50); }
+#define kwartdraai3 OnRev(OUT_C,40); OnRev(OUT_A,80); Wait(1200);
+#define achteruit OnFwd(OUT_AC,50); Wait(500);
+
+task lijnvolger();
+
+task main()
+{
+     SetSensorLight(S1);
+     SetSensorLight(S2);
+     SetSensorLowspeed(S3);
+     SetSensorLowspeed(S4);
+
+     OnFwd(OUT_AC,50);                                                          //achteruit
+     OnRev(OUT_B,50);
+     Wait(500);                                                                 //idem
+     OnRev(OUT_A,40);                                                           //kwartdraai
+     OnFwd(OUT_C,40);                                                           //idem
+     OnFwd(OUT_C,10);
+     Wait(750);                                                                 //idem
+     Off(OUT_ABC);
+     OnRev(OUT_AC,50);                                                          //vooruit50
+     OnFwd(OUT_B,50);
+     Wait(1200);                                                                  //kwartbocht
+     OnRev(OUT_C,50);
+     OnFwd(OUT_B,10);
+     Off(OUT_A);
+     Wait(800);                                                                   //kwartbocht
+     OnRev(OUT_AC,60);
+     OnFwd(OUT_B,50);
+     Wait(1000);
+     OnRev(OUT_C,70);
+     OnFwd(OUT_B,10);
+     Off(OUT_A);
+     Wait(600);                                                                   //iets meer dan kwartbocht
+     OnRev(OUT_ABC,70);
+}
+     
