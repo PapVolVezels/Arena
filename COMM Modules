@@ -40,12 +40,14 @@ int sensortouchvalue;
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
 	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
 		{
+			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
 		}
 
 //Gripmotor												//Stel de gripmotor (MotorY) in op snelheid waarde vel
 	void MotorY (int vel)
 		{
+			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
 		}
 
@@ -56,6 +58,7 @@ int sensortouchvalue;
 			char error;
 			while(true)									//"value" staat voor de sensor waarde
 				{
+					until(BluetoothStatus(CONNECTION) == NO_ERR);
 					error = ReceiveRemoteNumber(QUEUEPRESSURE, true, tempvalue);
 					if(error == NULL)
 						{
@@ -91,7 +94,6 @@ SetSensorTouch(S1);
 		{
 			char error;
 			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
-			while(true)
 			error = ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
 			if(error == NULL)
 				{
