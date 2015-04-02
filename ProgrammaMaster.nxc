@@ -1,5 +1,5 @@
-#define zwart1 50
-#define zwart2 55
+#define zwart1 40
+#define zwart2 45
 #define kwartdraai OnRev(OUT_A,40); OnFwd(OUT_C,40); Wait(450);
 #define vooruit50 OnRev(OUT_AC,50);
 #define lijnvolgerS1 OnRev(OUT_A,50); OnRev(OUT_C,50); if(SENSOR_1 <= zwart1) { OnFwd(OUT_A,50); OnRev(OUT_C,50); }
@@ -13,6 +13,8 @@ task steen_ontwijken();
 task anderekant();
 task lijnvolger();
 task blikje();
+
+
 
 /*Dit is een file voor alle functie's en macro's voor de communicatie tussen de stenen.
  *Kopiëer deze modules aan het begin van het programma. Je kunt daarna de functies gebruiken in het programma.
@@ -29,20 +31,21 @@ task blikje();
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
-#define CONNECTION 1
+#define CONNECTION 1											//Vul gebruikte connectie in
 
 //Connectiestatustask
 task ConnectionStatus()
 	{
 		while(true)
 			{
+				ClearLine(LCD_LINE2);
 				if (BluetoothStatus(CONNECTION) != NO_ERR)
 					{
-						TextOut(5,LCD_LINE2,"Bluetoetoetoeter!");
+						TextOut(5,LCD_LINE2,"Bluetoetoeter!");
 					}
 				else
 					{
-						TextOut(5,LCD_LINE2,"BT working correctly!");
+						TextOut(5,LCD_LINE2,"BT working!");
 					}
 				Wait(10);
 			}
@@ -50,17 +53,20 @@ task ConnectionStatus()
 
 //MASTER
 
+#define CONNECTION 1											//Vul gebruikte connectie in
 int sensortouchvalue;
 
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
 	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
 		{
+			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
 		}
 
 //Gripmotor												//Stel de gripmotor (MotorY) in op snelheid waarde vel
 	void MotorY (int vel)
 		{
+			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
 		}
 
@@ -71,6 +77,7 @@ int sensortouchvalue;
 			char error;
 			while(true)									//"value" staat voor de sensor waarde
 				{
+					until(BluetoothStatus(CONNECTION) == NO_ERR);
 					error = ReceiveRemoteNumber(QUEUEPRESSURE, true, tempvalue);
 					if(error == NULL)
 						{
@@ -81,10 +88,8 @@ int sensortouchvalue;
 				}
 		}
 
-
-
 task main()
-{
+   {
      SetSensorLight(IN_1);
      SetSensorLight(IN_2);
      SetSensorTouch(IN_3);
@@ -92,8 +97,7 @@ task main()
      while(true)
      {
                 OnFwd(OUT_B,80);
-                OnRev(OUT_C,70);
-                OnRev(OUT_A,50);
+                OnRevSync(OUT_AC,70,0);
                 if(SENSOR_1 <= zwart1)
                 {
                             OnFwd(OUT_A,50);
@@ -108,7 +112,7 @@ task main()
                 }
                 if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2)
                 {
-                            Off(OUT_C);
+                            OnRevSync(OUT_AC,70,0);
                 }
                 if(sensortouchvalue == 1)                                               //Touchsensor via de andere steen!!
                 {
@@ -117,7 +121,7 @@ task main()
    }
 }
 
-task steen_ontwijken()
+task steen_ontwijken()                                                          //Bruce's programma moet hier
 {
      OnFwd(OUT_AC,50);
      Wait(500);
@@ -132,7 +136,7 @@ task steen_ontwijken()
                      OnRev(OUT_C,40);
                      OnRev(OUT_A,80);
                      Wait(450);
-                     OnRev(OUT_AC,100);
+                     OnRevSync(OUT_AC,100,0);
          }
          if(SENSOR_4 >= 20)
          {
@@ -154,13 +158,13 @@ task steen_ontwijken()
         }
 }
 
-task anderekant()
+task anderekant()                                                               //Bruce's programma moet hier
 {
      OnRev(OUT_A,40);
      OnFwd(OUT_C,40);
      Wait(450);
-     Off(motoren);
-     OnRev(motoren,100);
+     Off(OUT_AC);
+     OnRevSync(OUT_AC,100,0);
      if(SENSOR_3 <= 20)
      {
                  OnRev(OUT_A,40);
@@ -186,23 +190,22 @@ task lijnvolger()
 while(true)
      {
                 OnFwd(OUT_B,80);
-                OnRev(OUT_C,70);
-                OnRev(OUT_A,50);
+                OnRevSync(OUT_AC,70,0);
                 if(SENSOR_1 <= zwart1)
                 {
-                            OnFwd(OUT_A,50);
-                            OnRev(OUT_C,70);
+                            OnFwd(OUT_A,40);
+                            OnRev(OUT_C,60);
                             OnFwd(OUT_B,40);
                 }
                 if(SENSOR_2 <= zwart2)
                 {
-                            OnFwd(OUT_C,70);
-                            OnRev(OUT_A,50);
-                            OnFwd(OUT_B,40);
+                            OnFwd(OUT_C,60);
+                            OnRev(OUT_A,40);
+                            OnFwd(OUT_B,30);
                 }
                 if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2)
                 {
-                            Off(OUT_C);
+                            OnRevSync(OUT_AC,70,0);
                 }
                 if(SENSOR_1 >= zilver1 && SENSOR_2 >= zilver2)
                 {
