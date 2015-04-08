@@ -38,7 +38,7 @@ task ConnectionStatus()
 		}
 
 //Druksensor												//Lees de waarde van de Druksensor uit
-int sensortouchvalue;
+	int sensortouchvalue;
 
 	task DrukSensor ()
 		{
@@ -51,8 +51,16 @@ int sensortouchvalue;
 					if(error == NULL)
 						{
 							sensortouchvalue = tempvalue;
+							NumOut(70, LCD_LINE3, sensortouchvalue);
 						}
 					Wait(10);
 					
 				}
+		}
+
+	task main()
+		{
+			start Connectionstatus;
+			start DrukSensor;
+			TextOut(5, LCD_LINE3, "Druksensor:");
 		}
