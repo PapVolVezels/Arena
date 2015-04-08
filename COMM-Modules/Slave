@@ -10,22 +10,22 @@
 #define SENSORTOUCHPORT S1
 
 //Connectiestatustask
-task ConnectionStatus()
-	{
-		while(true)
-			{
-				ClearLine(LCD_LINE2);
-				if (BluetoothStatus(CONNECTION) != NO_ERR)
-					{
-						TextOut(5,LCD_LINE2,"Bluetoetoeter!");
-					}
-				else
-					{
-						TextOut(5,LCD_LINE2,"BT working!");
-					}
-				Wait(10);
-			}
-	}
+	task ConnectionStatus()
+		{
+			while(true)
+				{
+					ClearLine(LCD_LINE2);
+					if (BluetoothStatus(CONNECTION) != NO_ERR)
+						{
+							TextOut(5,LCD_LINE2,"Bluetoetoeter!");
+						}
+					else
+						{
+							TextOut(5,LCD_LINE2,"BT working!");
+						}
+					Wait(10);
+				}
+		}
 
 //Klemmotor
 	void MotorX()											//Ontvang de verzochte snelheid voor de klemmotor (MotorX)
