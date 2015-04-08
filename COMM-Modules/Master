@@ -1,0 +1,58 @@
+//Macro's
+#define QUEUEMOTORX 1
+#define QUEUEMOTORY 2
+#define QUEUEPRESSURE 3
+#define QUEUECOMMAND 4
+#define CONNECTION 1
+
+//Connectiestatustask
+task ConnectionStatus()
+	{
+		while(true)
+			{
+				ClearLine(LCD_LINE2);
+				if (BluetoothStatus(CONNECTION) != NO_ERR)
+					{
+						TextOut(5,LCD_LINE2,"Bluetoetoeter!");
+					}
+				else
+					{
+						TextOut(5,LCD_LINE2,"BT working!");
+					}
+				Wait(10);
+			}
+	}
+
+//Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
+	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
+		{
+			until(BluetoothStatus(CONNECTION) == NO_ERR);
+			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
+		}
+
+//Gripmotor												//Stel de gripmotor (MotorY) in op snelheid waarde vel
+	void MotorY (int vel)
+		{
+			until(BluetoothStatus(CONNECTION) == NO_ERR);
+			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
+		}
+
+//Druksensor												//Lees de waarde van de Druksensor uit
+int sensortouchvalue;
+
+	task DrukSensor ()
+		{
+			int tempvalue;
+			char error;
+			while(true)									//"value" staat voor de sensor waarde
+				{
+					until(BluetoothStatus(CONNECTION) == NO_ERR);
+					error = ReceiveRemoteNumber(QUEUEPRESSURE, true, tempvalue);
+					if(error == NULL)
+						{
+							sensortouchvalue = tempvalue;
+						}
+					Wait(10);
+					
+				}
+		}
