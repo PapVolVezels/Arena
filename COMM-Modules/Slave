@@ -3,11 +3,14 @@
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
+#define QUEUEUS 5
 #define CONNECTION 0											//Connectie van slave naar master is altijd 0
 #define MOTORX OUT_A											//Vul hier de gebruikte poorten in
 #define MOTORY OUT_B
 #define SENSORTOUCH SENSOR_1
 #define SENSORTOUCHPORT S1
+#define SENSORUS SENSOR_2
+#define SENSORUSPORT S2
 
 //Connectiestatustask
 	task ConnectionStatus()
@@ -59,6 +62,15 @@
 			value = SENSORTOUCH;
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendResponseNumber(QUEUEPRESSURE, value);
+		}
+		
+//Ultrasonesensor
+	void UltraSoneSensor()										//Stuur de waarde van Druksensor
+		{
+			int value;
+			value = SENSORUS;
+			until(BluetoothStatus(CONNECTION) == NO_ERR);
+			SendResponseNumber(QUEUEUS, value);
 		}
 
 	task main()
