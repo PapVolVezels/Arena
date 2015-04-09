@@ -69,13 +69,14 @@
 	void UltraSoneSensor()										//Stuur de waarde van Druksensor
 		{
 			int value;
-			value = SENSORUS;
+			value = SensorUs(SENSORUS);
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendResponseNumber(QUEUEUS, value);
 		}
 
-	task main()
-		{
-			start ConnectionStatus;
-			SetSensorTouch(SENSORTOUCHPORT);
-		}
+task main()
+	{
+		SetSensorTouch(SENSORTOUCHPORT);
+		SetSensorLowspeed(SENSORUSPORT);
+		start ConnectionStatus;
+	}
