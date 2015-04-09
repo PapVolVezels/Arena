@@ -20,7 +20,7 @@ task ConnectionStatus()
 					{
 						TextOut(5,LCD_LINE2,"BT working!");
 					}
-				Wait(10);
+				Wait(100);
 			}
 	}
 
@@ -85,5 +85,6 @@ task ConnectionStatus()
 	task main()
 		{
 			start ConnectionStatus;
-			start DrukSensor;	
+			start DrukSensor;
+			start UltraSoneSensor;
 		}
