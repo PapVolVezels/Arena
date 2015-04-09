@@ -60,7 +60,7 @@ task ConnectionStatus()
 
 	task main()
 		{
-			start Connectionstatus;
+			start ConnectionStatus;
 			start DrukSensor;
 			TextOut(5, LCD_LINE3, "Druksensor:");
 		}
