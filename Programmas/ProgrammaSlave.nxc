@@ -3,11 +3,14 @@
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
+#define QUEUEUS 5
 #define CONNECTION 0											//Connectie van slave naar master is altijd 0
 #define MOTORX OUT_A											//Vul hier de gebruikte poorten in
 #define MOTORY OUT_B
 #define SENSORTOUCH SENSOR_1
 #define SENSORTOUCHPORT S1
+#define SENSORUS SENSOR_2
+#define SENSORUSPORT S2
 
 //Connectiestatustask
 	task ConnectionStatus()
@@ -29,7 +32,8 @@
 
 //Klemmotor
 	void MotorX()											//Ontvang de verzochte snelheid voor de klemmotor (MotorX)
-	char error;
+		{
+			char error;
 			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			error = ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
@@ -60,21 +64,26 @@
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendResponseNumber(QUEUEPRESSURE, value);
 		}
-
-	task main()
+		
+//Ultrasonesensor
+	void UltraSoneSensor()										//Stuur de waarde van Druksensor
 		{
-			start ConnectionStatus;
-			
+			int value;
+			value = SensorUs(SENSORUS);
+			until(BluetoothStatus(CONNECTION) == NO_ERR);
+			SendResponseNumber(QUEUEUS, value);
 		}
 
 task main()
 	{
 		SetSensorTouch(SENSORTOUCHPORT);
+		SetSensorLowspeed(SENSORUSPORT);
 		start ConnectionStatus;
 		while(true)
 			{
 				MotorX();
 				MotorY();
 				DrukSensor();
+				UltraSoneSensor();
 			}
 	}
