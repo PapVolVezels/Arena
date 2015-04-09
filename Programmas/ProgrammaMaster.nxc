@@ -13,7 +13,7 @@ task steen_ontwijken();
 task anderekant();
 task lijnvolger();
 task blikje();
-
+task x1();
 
 
 /*Dit is een file voor alle functie's en macro's voor de communicatie tussen de stenen.
@@ -217,4 +217,20 @@ while(true)
 task blikje()
 {
 
+     OnRevSync(OUT_AC,50,0);
+     if(sensortouchvalue == 1 && sensorusvalue >= 5)
+     {
+                         ExitTo(x);
+     }
+     else
+     OnRevSync(OUT_AC,50,0);
+     if(sensortouchvalue == 1 && sensorusvalue <= 5)
+     {
+                         OnRevSync(OUT_AC,50,0);
+                         Wait(200);
+                         OnFwd(OUT_C,50);
+                         OnRev(OUT_A,50);
+                         Wait(500);                                             // 90*
+                         OnRevSync(OUT_AC,50,0);
+     }
 }
