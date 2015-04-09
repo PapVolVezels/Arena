@@ -32,7 +32,8 @@
 
 //Klemmotor
 	void MotorX()											//Ontvang de verzochte snelheid voor de klemmotor (MotorX)
-	char error;
+		{
+			char error;
 			int vel;									//"vel" en "value" betekenen hetzelfde als bij master
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			error = ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
