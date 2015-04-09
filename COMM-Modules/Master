@@ -3,6 +3,7 @@
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
+#define QUEUEUS 5
 #define CONNECTION 1
 
 //Connectiestatustask
@@ -44,6 +45,7 @@ task ConnectionStatus()
 		{
 			int tempvalue;
 			char error;
+			TextOut(5, LCD_LINE3, "Druksensor:");
 			while(true)									//"value" staat voor de sensor waarde
 				{
 					until(BluetoothStatus(CONNECTION) == NO_ERR);
@@ -53,7 +55,29 @@ task ConnectionStatus()
 							sensortouchvalue = tempvalue;
 							NumOut(70, LCD_LINE3, sensortouchvalue);
 						}
-					Wait(10);
+					Wait(100);
+					
+				}
+		}
+		
+//Druksensor												//Lees de waarde van de Druksensor uit
+	int sensorusvalue;
+
+	task UltraSoneSensor ()
+		{
+			int tempvalue;
+			char error;
+			TextOut(5, LCD_LINE3, "UltrasoneSensor:");
+			while(true)									//"value" staat voor de sensor waarde
+				{
+					until(BluetoothStatus(CONNECTION) == NO_ERR);
+					error = ReceiveRemoteNumber(QUEUEUS, true, tempvalue);
+					if(error == NULL)
+						{
+							sensorusvalue = tempvalue;
+							NumOut(70, LCD_LINE4, sensorusvalue);
+						}
+					Wait(100);
 					
 				}
 		}
@@ -61,6 +85,5 @@ task ConnectionStatus()
 	task main()
 		{
 			start ConnectionStatus;
-			start DrukSensor;
-			TextOut(5, LCD_LINE3, "Druksensor:");
+			start DrukSensor;	
 		}
