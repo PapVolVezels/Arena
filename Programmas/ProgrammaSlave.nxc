@@ -69,7 +69,7 @@
 	void UltraSoneSensor()										//Stuur de waarde van Druksensor
 		{
 			int value;
-			value = SensorUS(SENSORUS);
+			value = SensorUS(SENSORUSPORT);
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendResponseNumber(QUEUEUS, value);
 		}
