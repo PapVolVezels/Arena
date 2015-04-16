@@ -1,0 +1,106 @@
+//Macro's
+#define QUEUEMOTORX 1
+#define QUEUEMOTORY 2
+#define QUEUEPRESSURE 3
+#define QUEUECOMMAND 4
+#define QUEUEUS 5
+#define CONNECTION 1
+
+mutex BT;
+int sensorusvalue;
+int sensortouchvalue;
+
+//Connectiestatustask
+task ConnectionStatus()
+	{
+		while(true)
+			{
+				ClearLine(LCD_LINE2);
+				if (BluetoothStatus(CONNECTION) != NO_ERR)
+					{
+						TextOut(5,LCD_LINE2,"Bluetoetoeter!");
+					}
+				else
+					{
+						TextOut(5,LCD_LINE2,"BT working!");
+					}
+				Wait(100);
+			}
+	}
+
+//Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
+	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
+		{
+			Acquire(BT);
+			until(BluetoothStatus(CONNECTION) == NO_ERR);
+			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
+			Release(BT);
+		}
+
+//Gripmotor												//Stel de gripmotor (MotorY) in op snelheid waarde vel
+	void MotorY (int vel)
+		{
+			Acquire(BT);
+			until(BluetoothStatus(CONNECTION) == NO_ERR);
+			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
+			Release(BT);
+		}
+
+//Druksensor												//Lees de waarde van de Druksensor uit
+	task DrukSensor ()
+		{
+			int tempvalue;
+			char error;
+			TextOut(5, LCD_LINE3, "Druksensor:");
+			while(true)									//"value" staat voor de sensor waarde
+				{
+					Acquire(BT);
+					until(BluetoothStatus(CONNECTION) == NO_ERR);
+					error = ReceiveRemoteNumber(QUEUEPRESSURE, true, tempvalue);
+					Release(BT);
+					if(error == NULL)
+						{
+							sensortouchvalue = tempvalue;
+							NumOut(75, LCD_LINE3, sensortouchvalue);
+						}
+					Wait(100);
+					
+				}
+		}
+		
+//Druksensor												//Lees de waarde van de Druksensor uit
+	task UltraSoneSensor ()
+		{
+			int tempvalue;
+			char error;
+			while(true)									//"value" staat voor de sensor waarde
+				{
+					Acquire(BT);
+					until(BluetoothStatus(CONNECTION) == NO_ERR);
+					error = ReceiveRemoteNumber(QUEUEUS, true, tempvalue);
+					Release(BT);
+					if(error == NULL)
+						{
+							sensorusvalue = tempvalue;
+							ClearLine(LCD_LINE4);
+							TextOut(5, LCD_LINE4, "Ultrasone:");
+							NumOut(75, LCD_LINE4, sensorusvalue);
+						}
+					Wait(100);
+					
+				}
+		}
+
+	task main()
+		{
+			start ConnectionStatus;
+			start DrukSensor;
+			start UltraSoneSensor;
+			while(true)
+				{
+					MotorX(100);
+					Wait(500);
+					MotorX(0);
+					Wait(500);
+				}
+		}
