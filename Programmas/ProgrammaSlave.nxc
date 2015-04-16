@@ -61,6 +61,8 @@
 		{
 			int value;
 			value = SENSORTOUCH;
+			TextOut(5, LCD_LINE3, "Druksensor:");
+			NumOut(75, LCD_LINE3, value);
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendResponseNumber(QUEUEPRESSURE, value);
 		}
@@ -70,6 +72,9 @@
 		{
 			int value;
 			value = SensorUS(SENSORUSPORT);
+			ClearLine(LCD_LINE4);
+			TextOut(5, LCD_LINE4, "Ultrasone:");
+			NumOut(75, LCD_LINE4, value);
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendResponseNumber(QUEUEUS, value);
 		}
