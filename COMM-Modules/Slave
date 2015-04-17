@@ -39,6 +39,9 @@
 			error = ReceiveRemoteNumber(QUEUEMOTORX, true, vel);
 			if(error == NULL)
 				{
+					ClearLine(LCD_LINE5);
+					TextOut(5,LCD_LINE5, "MotorX:");
+					NumOut(75,LCD_LINE5, vel);
 					OnFwd(MOTORX, vel);
 				}
 		}
@@ -52,6 +55,9 @@
 			error = ReceiveRemoteNumber(QUEUEMOTORY, true, vel);
 			if(error == NULL)
 				{
+					ClearLine(LCD_LINE6);
+					TextOut(5,LCD_LINE6, "MotorY:");
+					NumOut(75,LCD_LINE6, vel);
 					OnFwd(MOTORY, vel);
 				}
 		}
