@@ -31,6 +31,9 @@ task ConnectionStatus()
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
 	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
 		{
+			ClearLine(LCD_LINE5);
+			TextOut(5,LCD_LINE5, "MotorX:");
+			NumOut(75,LCD_LINE5, vel);
 			Acquire(BT);
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
@@ -40,6 +43,9 @@ task ConnectionStatus()
 //Gripmotor												//Stel de gripmotor (MotorY) in op snelheid waarde vel
 	void MotorY (int vel)
 		{
+			ClearLine(LCD_LINE6);
+			TextOut(5,LCD_LINE6, "MotorY:");
+			NumOut(75,LCD_LINE6, vel);
 			Acquire(BT);
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
