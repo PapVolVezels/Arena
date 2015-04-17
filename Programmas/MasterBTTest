@@ -57,7 +57,6 @@ task ConnectionStatus()
 		{
 			int tempvalue;
 			char error;
-			TextOut(5, LCD_LINE3, "Druksensor:");
 			while(true)									//"value" staat voor de sensor waarde
 				{
 					Acquire(BT);
@@ -67,6 +66,8 @@ task ConnectionStatus()
 					if(error == NULL)
 						{
 							sensortouchvalue = tempvalue;
+							ClearLine(LCD_LINE3);
+							TextOut(5, LCD_LINE3, "Druksensor:");
 							NumOut(75, LCD_LINE3, sensortouchvalue);
 						}
 					Wait(100);
@@ -74,7 +75,7 @@ task ConnectionStatus()
 				}
 		}
 		
-//Druksensor												//Lees de waarde van de Druksensor uit
+//Ultrasone												//Lees de waarde van de Druksensor uit
 	task UltraSoneSensor ()
 		{
 			int tempvalue;
@@ -105,8 +106,10 @@ task ConnectionStatus()
 			while(true)
 				{
 					MotorX(100);
+					MotorY(0);
 					Wait(500);
 					MotorX(0);
+					MotorY(100);
 					Wait(500);
 				}
 		}
