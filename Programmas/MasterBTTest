@@ -16,13 +16,24 @@ task ConnectionStatus()
 		while(true)
 			{
 				ClearLine(LCD_LINE2);
-				if (BluetoothStatus(CONNECTION) != NO_ERR)
+				ClearLine(LCD_LINE1);
+				TextOut(5,LCD_LINE1, "BT status:");
+				NumOut(75,LCD_LINE1, BluetoothStatus(CONNECTION) );
+				if (BluetoothStatus(CONNECTION) == -32)
 					{
 						TextOut(5,LCD_LINE2,"Bluetoetoeter!");
 					}
+				else if(BluetoothStatus(CONNECTION) == 32)
+					{
+						TextOut(5,LCD_LINE2,"BT = busy");
+					}
+				else if(BluetoothStatus(CONNECTION) == 0)
+					{
+						TextOut(5,LCD_LINE2,"BT = idle");
+					}
 				else
 					{
-						TextOut(5,LCD_LINE2,"BT working!");
+						TextOut(5,LCD_LINE2,"Unknown BT status.");
 					}
 				Wait(100);
 			}
