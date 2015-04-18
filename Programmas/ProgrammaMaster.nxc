@@ -1,37 +1,20 @@
-#define zwart1 40
-#define zwart2 45
-#define kwartdraai OnRev(OUT_A,40); OnFwd(OUT_C,40); Wait(450);
-#define vooruit50 OnRev(OUT_AC,50);
-#define lijnvolgerS1 OnRev(OUT_A,50); OnRev(OUT_C,50); if(SENSOR_1 <= zwart1) { OnFwd(OUT_A,50); OnRev(OUT_C,50); }
-#define lijnvolgerS2 if(SENSOR_2 <= zwart2) { OnFwd(OUT_C,50); OnRev(OUT_A,50); }
-#define beide_wit if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2) { OnRev(OUT_AC,50); }
-#define zilver1 70
-#define zilver2 70
-#define motoren OUT_AC
-
-task steen_ontwijken();
-task anderekant();
-task lijnvolger();
-task blikje();
-task x1();
-
-
-/*Dit is een file voor alle functie's en macro's voor de communicatie tussen de stenen.
- *Kopiëer deze modules aan het begin van het programma. Je kunt daarna de functies gebruiken in het programma.
- *Bij sommige functies kun je één of meerdere parameters invoeren.
- *Alleen sub MotorX, sub MotorY en Commando werken met waardes, je voert de snelheid in die je wilt.
+/*
+ *Arena herschreven door Bram
+ *Gebaseerd op Tim's programma.
+ *Maar dan logisch.
  */
 
- /*Niets hiervan is gecompiled, zit dus boordenvol beestjes!!!*/
-
-//SLAVE&&MASTER
-
-//Macro's
+//Bluetooth lib
 #define QUEUEMOTORX 1
 #define QUEUEMOTORY 2
 #define QUEUEPRESSURE 3
 #define QUEUECOMMAND 4
-#define CONNECTION 1											//Vul gebruikte connectie in
+#define QUEUEUS 5
+#define CONNECTION 1
+
+mutex BT;
+int sensorusvalue;
+int sensortouchvalue;
 
 //Connectiestatustask
 task ConnectionStatus()
@@ -39,35 +22,51 @@ task ConnectionStatus()
 		while(true)
 			{
 				ClearLine(LCD_LINE2);
-				if (BluetoothStatus(CONNECTION) != NO_ERR)
+				ClearLine(LCD_LINE1);
+				TextOut(5,LCD_LINE1, "BT status:");
+				NumOut(75,LCD_LINE1, BluetoothStatus(CONNECTION) );
+				if (BluetoothStatus(CONNECTION) == -32)
 					{
 						TextOut(5,LCD_LINE2,"Bluetoetoeter!");
 					}
+				else if(BluetoothStatus(CONNECTION) == 32)
+					{
+						TextOut(5,LCD_LINE2,"BT = busy");
+					}
+				else if(BluetoothStatus(CONNECTION) == 0)
+					{
+						TextOut(5,LCD_LINE2,"BT = idle");
+					}
 				else
 					{
-						TextOut(5,LCD_LINE2,"BT working!");
+						TextOut(5,LCD_LINE2,"Unknown BT status.");
 					}
-				Wait(10);
+				Wait(100);
 			}
 	}
-
-//MASTER
-
-#define CONNECTION 1											//Vul gebruikte connectie in
-int sensortouchvalue;
 
 //Klemmotor												//Stel de klemmotor (MotorX) in op de snelheid waarde vel
 	void MotorX (int vel)										//"vel" staat voor de opgegeven snelheid
 		{
+			ClearLine(LCD_LINE5);
+			TextOut(5,LCD_LINE5, "MotorX:");
+			NumOut(75,LCD_LINE5, vel);
+			Acquire(BT);
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendRemoteNumber(CONNECTION, QUEUEMOTORX, vel);
+			Release(BT);
 		}
 
 //Gripmotor												//Stel de gripmotor (MotorY) in op snelheid waarde vel
 	void MotorY (int vel)
 		{
+			ClearLine(LCD_LINE6);
+			TextOut(5,LCD_LINE6, "MotorY:");
+			NumOut(75,LCD_LINE6, vel);
+			Acquire(BT);
 			until(BluetoothStatus(CONNECTION) == NO_ERR);
 			SendRemoteNumber(CONNECTION, QUEUEMOTORY, vel);
+			Release(BT);
 		}
 
 //Druksensor												//Lees de waarde van de Druksensor uit
@@ -77,160 +76,380 @@ int sensortouchvalue;
 			char error;
 			while(true)									//"value" staat voor de sensor waarde
 				{
+					Acquire(BT);
 					until(BluetoothStatus(CONNECTION) == NO_ERR);
 					error = ReceiveRemoteNumber(QUEUEPRESSURE, true, tempvalue);
+					Release(BT);
 					if(error == NULL)
 						{
 							sensortouchvalue = tempvalue;
+							ClearLine(LCD_LINE3);
+							TextOut(5, LCD_LINE3, "Druksensor:");
+							NumOut(75, LCD_LINE3, sensortouchvalue);
 						}
-					Wait(10);
+					Wait(100);
 
 				}
 		}
 
-task main()
-   {
-     SetSensorLight(IN_1);
-     SetSensorLight(IN_2);
-     SetSensorTouch(IN_3);
+//Ultrasone												//Lees de waarde van de Druksensor uit
+	task UltraSoneSensor ()
+		{
+			int tempvalue;
+			char error;
+			while(true)									//"value" staat voor de sensor waarde
+				{
+					Acquire(BT);
+					until(BluetoothStatus(CONNECTION) == NO_ERR);
+					error = ReceiveRemoteNumber(QUEUEUS, true, tempvalue);
+					Release(BT);
+					if(error == NULL)
+						{
+							sensorusvalue = tempvalue;
+							ClearLine(LCD_LINE4);
+							TextOut(5, LCD_LINE4, "Ultrasone:");
+							NumOut(75, LCD_LINE4, sensorusvalue);
+						}
+					Wait(100);
 
-     while(true)
-     {
-                OnFwd(OUT_B,80);
-                OnRevSync(OUT_AC,70,0);
-                if(SENSOR_1 <= zwart1)
-                {
-                            OnFwd(OUT_A,50);
-                            OnRev(OUT_C,70);
-                            OnFwd(OUT_B,40);
-                }
-                if(SENSOR_2 <= zwart2)
-                {
-                            OnFwd(OUT_C,70);
-                            OnRev(OUT_A,50);
-                            OnFwd(OUT_B,40);
-                }
-                if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2)
-                {
-                            OnRevSync(OUT_AC,70,0);
-                }
-                if(sensortouchvalue == 1)                                               //Touchsensor via de andere steen!!
-                {
-                            ExitTo(steen_ontwijken);
-                }
-   }
+				}
+		}
+
+#define US_L SensorUS(S3)
+#define US_R SensorUS(S4)
+#define LICHT_L SENSOR_1
+#define LICHT_R SENSOR_2
+
+#define ZWART_L 45
+#define ZWART_R 45
+#define ZILVER_L 90																//Nog instellen
+#define ZILVER_R 90																//Nog instellen
+#define BLIKDREMPELWAARDE 10
+#define BLIKVAST 5
+
+//Vanaf hier programeren........................................................
+void SteenOntwijkenMetUS()
+{
+	int afstand;
+	int t;
+	int t2;
+	ClearLine(LCD_LINE6);
+	TextOut(5, LCD_LINE6, "Steen Ontwijken");
+	OnRevSync(OUT_AC, 50, 0);
+	Wait(500);
+	if(US_L >= US_R)
+	{
+		//Draai naar links
+		OnRev(OUT_A, -40);
+		OnRev(OUT_C, 40);
+		Wait(450);
+		
+		//Init tijd+afstand tot steen
+		t=CurrentTick();
+		afstand = US_R;
+		
+		//Rij totdat de afstand groter wordt+ een beetje extra
+		OnRevSync(OUT_AC, 50, 0);
+		until(US_R > afstand+5);
+		Wait(500);
+		
+		//Bereken hoeveelheid tijd die gereden is
+		t=CurrentTick()-t;
+		
+		//Draai naar rechts
+		OnRev(OUT_A, 40);
+		OnRev(OUT_C, -40);
+		Wait(450);
+		
+		//Init afstand tot steen
+		afstand=US_R;
+		
+		//Rij totdat de afstand groter wordt+ een beetje extra
+		OnRevSync(OUT_AC, 50, 0);
+		until(US_R > afstand+5);
+        Wait(500);
+        
+        //Draai naar rechts
+		OnRev(OUT_A, 40);
+		OnRev(OUT_C, -40);
+		Wait(450);
+		
+		//Init t2
+		t2=CurrentTick();
+		
+		//Rij net zo lang als zo net, maar de andere kant op
+		OnRevSync(OUT_AC, 50, 0);
+		until(CurrentTick()-t2 < t);
+		
+		//Draai naar links
+		OnRev(OUT_A, -40);
+		OnRev(OUT_C, 40);
+		Wait(450);
+	}
+	else
+	{
+		//Draai naar rechts
+		OnRev(OUT_A, 40);
+		OnRev(OUT_C, -40);
+		Wait(450);
+
+		//Init tijd+afstand tot steen
+		t=CurrentTick();
+		afstand = US_L;
+
+		//Rij totdat de afstand groter wordt+ een beetje extra
+		OnRevSync(OUT_AC, 50, 0);
+		until(US_L > afstand+5);
+		Wait(500);
+
+		//Bereken hoeveelheid tijd die gereden is
+		t=CurrentTick()-t;
+
+		//Draai naar links
+		OnRev(OUT_A, -40);
+		OnRev(OUT_C, 40);
+		Wait(450);
+
+		//Init afstand tot steen
+		afstand=US_L;
+
+		//Rij totdat de afstand groter wordt+ een beetje extra
+		OnRevSync(OUT_AC, 50, 0);
+		until(US_L > afstand+5);
+        Wait(500);
+
+        //Draai naar links
+		OnRev(OUT_A, -40);
+		OnRev(OUT_C, 40);
+		Wait(450);
+
+		//Init t2
+		t2=CurrentTick();
+
+		//Rij net zo lang als zo net, maar de andere kant op
+		OnRevSync(OUT_AC, 50, 0);
+		until(CurrentTick()-t2 < t);
+
+		//Draai naar rechts
+		OnRev(OUT_A, 40);
+		OnRev(OUT_C, -40);
+		Wait(450);
+	}
 }
 
-task steen_ontwijken()                                                          //Bruce's programma moet hier
+void SteenOntwijken()
 {
-     OnFwd(OUT_AC,50);
-     Wait(500);
-
-         OnRev(OUT_C,40);
-         OnFwd(OUT_A,40);
-         Wait(450);
-         Off(OUT_AC);
-         OnRev(OUT_AC,100);
-         if(SENSOR_4 <= 20)
-         {
-                     OnRev(OUT_C,40);
-                     OnRev(OUT_A,80);
-                     Wait(450);
-                     OnRevSync(OUT_AC,100,0);
-         }
-         if(SENSOR_4 >= 20)
-         {
-                     OnRev(OUT_C,40);
-                     OnRev(OUT_A,80);
-                     Wait(450);
-                     OnRev(motoren,100);
-         }
-         if(SENSOR_1 <= zwart1)
-         {
-                     Off(OUT_A);
-                     OnRev(OUT_C,100);
-                     if(SENSOR_2 <= zwart2)
-                     {
-                                 OnFwd(OUT_C,100);
-                                 OnRev(OUT_A,100);
-                                 ExitTo(lijnvolger);
-                     }
-        }
+	ClearLine(LCD_LINE7);
+	NumOut(5, LCD_LINE7, US_R);
+	NumOut(50, LCD_LINE7, US_L);
+	if(US_R < US_L)
+	{
+		ClearLine(LCD_LINE6);
+		TextOut(5, LCD_LINE6, "Via Links");
+		//Ga naar achter
+		OnRevSync(OUT_AC,-50, 0);
+		Wait(500);
+		//Draai naar links
+		OnRev(OUT_A,-50);
+		OnRev(OUT_C, 50);
+		Wait(800);
+		//Ga naar voor
+		OnRevSync(OUT_AC,100, 0);
+		Wait(750);
+		//Draai naar rechts
+		OnRev(OUT_A,50);
+		OnRev(OUT_C,-50);
+		Wait(700);
+		//Ga naar voor
+		OnRevSync(OUT_AC,100, 0);
+		Wait(1250);
+		//Draai naar rechts
+		OnRev(OUT_A, 50);
+		OnRev(OUT_C, -50);
+		Wait(700);
+		//Ga naar voor
+		OnRevSync(OUT_AC, 70, 0);
+		until(LICHT_R <= ZWART_R);
+		Wait(100);
+		//Draai naar liks
+		OnRev(OUT_A,-50);
+		OnRev(OUT_C, 50);
+		Wait(800);
+	}
+	else
+	{
+		ClearLine(LCD_LINE6);
+		TextOut(5, LCD_LINE6, "Via Rechts");
+		//Ga naar achter
+		OnRevSync(OUT_AC,-50, 0);
+		Wait(500);
+		//Draai naar rechts
+		OnRev(OUT_A,50);
+		OnRev(OUT_C, -50);
+		Wait(800);
+		//Ga naar voor
+		OnRevSync(OUT_AC,100, 0);
+		Wait(750);
+		//Draai naar links
+		OnRev(OUT_A,-50);
+		OnRev(OUT_C, 50);
+		Wait(700);
+		//Ga naar voor
+		OnRevSync(OUT_AC,100, 0);
+		Wait(1200);
+		//Draai naar links
+		OnRev(OUT_A, -50);
+		OnRev(OUT_C, 50);
+		Wait(800);
+		//Ga naar voor
+		OnRevSync(OUT_AC, 70, 0);
+		until(LICHT_R <= ZWART_R);
+		Wait(100);
+		//Draai naar rechts
+		OnRev(OUT_A,50);
+		OnRev(OUT_C, -50);
+		Wait(800);
+	}
 }
 
-task anderekant()                                                               //Bruce's programma moet hier
+void BlikjePakken()
 {
-     OnRev(OUT_A,40);
-     OnFwd(OUT_C,40);
-     Wait(450);
-     Off(OUT_AC);
-     OnRevSync(OUT_AC,100,0);
-     if(SENSOR_3 <= 20)
-     {
-                 OnRev(OUT_A,40);
-                 OnRev(OUT_C,80);
-                 Wait(450);
-                 OnRev(motoren,100);
-     }
-     if(SENSOR_2 <= zwart2)
-     {
-                 Off(OUT_C);
-                 OnRev(OUT_A,100);
-                 if(SENSOR_1 <= zwart1)
-                 {
-                             OnFwd(OUT_A,100);
-                             OnRev(OUT_C,100);
-                             ExitTo(lijnvolger);
-                 }
-     }
+	//......
+}
+
+void BlikjeDroppen()
+{
+	//......
+}
+
+task RescueLocatieZoeken()
+{
+	ClearLine(LCD_LINE6);
+	TextOut(5, LCD_LINE6, "Blikje Zoeken");
+	//......
+}
+
+task BlikjeZoeken()
+{
+	ClearLine(LCD_LINE6);
+	TextOut(5, LCD_LINE6, "Blikje Zoeken");
+	
+	//Zorgen dat robot redelijk recht is
+	OnRev(OUT_C, 40);
+	until(LICHT_R >= ZILVER_R)
+	Off(OUT_ABC);
+
+	OnRev(OUT_A, 40);
+	until(LICHT_L >= ZILVER_L)
+	Off(OUT_ABC);
+
+	//Init de afstand van muur
+	int afstand_muur_rechts=US_R;
+	int afstand_muur_links=US_L;
+	
+	//Kijk waar het blikje is
+	OnRevSync(OUT_AC, 20, 0);
+	while(true)
+	{
+		if(US_R < afstand_muur_rechts-BLIKDREMPELWAARDE)
+		{
+			//Draai naar rechts
+			OnRev(OUT_A, 40);
+			OnRev(OUT_C, -40);
+			Wait(450);
+			OnRevSync(OUT_AC, 40, 0);
+			until(sensorusvalue < BLIKVAST);
+			BlikjePakken();
+			ExitTo(RescueLocatieZoeken);
+			
+		}
+		else if(US_L < afstand_muur_links-BLIKDREMPELWAARDE)
+		{
+			//Draai naar links
+			OnRev(OUT_A, -40);
+			OnRev(OUT_C, 40);
+			Wait(450);
+			OnRevSync(OUT_AC, 40, 0);
+			until(sensorusvalue < BLIKVAST);
+			BlikjePakken();
+			ExitTo(RescueLocatieZoeken);
+		}
+//		else																	//Voor als hij scheef loopt
+//		{
+//			//Muurafstand vernieuwen
+//			afstand_muur_rechts=US_R;
+//			afstand_muur_links=US_L;
+//		}
+		Wait(100);
+	}
 }
 
 task lijnvolger()
 {
-while(true)
-     {
-                OnFwd(OUT_B,80);
-                OnRevSync(OUT_AC,70,0);
-                if(SENSOR_1 <= zwart1)
-                {
-                            OnFwd(OUT_A,40);
-                            OnRev(OUT_C,60);
-                            OnFwd(OUT_B,40);
-                }
-                if(SENSOR_2 <= zwart2)
-                {
-                            OnFwd(OUT_C,60);
-                            OnRev(OUT_A,40);
-                            OnFwd(OUT_B,30);
-                }
-                if(SENSOR_1 >= zwart1 && SENSOR_2 >= zwart2)
-                {
-                            OnRevSync(OUT_AC,70,0);
-                }
-                if(SENSOR_1 >= zilver1 && SENSOR_2 >= zilver2)
-                {
-                            ExitTo(blikje);
-                }
-}
+	//int temp;
+	int t0_L;
+	int t0_R;
+	OnRev(OUT_B, -80);
+	OnRevSync(OUT_AC, 70, 0);
+	while(true)
+	{
+		ClearLine(LCD_LINE6);
+		TextOut(5, LCD_LINE6, "Lijnvolger");
+		//Steen
+		if(sensortouchvalue==1)
+		{
+			Off(OUT_ABC);
+			SteenOntwijken();
+		}
+		//Zilver
+		if(abs(LICHT_L-ZILVER_L) < 10 abs(LICHT_R-ZILVER_R) < 10)
+		{
+			Off(OUT_ABC);
+			ExitTo(BlikjeZoeken);
+		}
+		//Kruispunt
+		if(abs((CurrentTick()-t0_L)-(CurrentTick()-t0_R)) < 50 && abs((CurrentTick()-t0_L)-(CurrentTick()-t0_R)) !=0)
+	    {
+			Off(OUT_AB);
+			OnRev(OUT_C, 100);
+			Wait(250);
+	    }
+	    //Te links van lijn
+		if(LICHT_L <= ZWART_L)
+		{
+			t0_L = CurrentTick();
+			OnRev(OUT_A, -70);
+			OnRev(OUT_C, 50);
+			OnRev(OUT_B, -60);
+		}
+		//Te links
+		if(LICHT_R <= ZWART_R)
+		{
+			t0_R = CurrentTick();
+			OnRev(OUT_C, -70);
+			OnRev(OUT_A, 50);
+			OnRev(OUT_B, -60);
+		}
+		if(LICHT_L > ZWART_L && LICHT_R > ZWART_R)
+		{
+			OnRevSync(OUT_AC, 70, 0);
+			OnRev(OUT_B, -70);
+		}
+		//temp=abs((CurrentTick()-t0_L)-(CurrentTick()-t0_L));
+	}
 }
 
-task blikje()
+task main()
 {
-
-     OnRevSync(OUT_AC,50,0);
-     if(sensortouchvalue == 1 && sensorusvalue >= 5)
-     {
-                         ExitTo(x);
-     }
-     else
-     OnRevSync(OUT_AC,50,0);
-     if(sensortouchvalue == 1 && sensorusvalue <= 5)
-     {
-                         OnRevSync(OUT_AC,50,0);
-                         Wait(200);
-                         OnFwd(OUT_C,50);
-                         OnRev(OUT_A,50);
-                         Wait(500);                                             // 90*
-                         OnRevSync(OUT_AC,50,0);
-     }
+	start ConnectionStatus;
+	start DrukSensor;
+	start UltraSoneSensor;
+	SetSensorLight(S1);
+	SetSensorLight(S2);
+	SetSensorLowspeed(S3);
+	SetSensorLowspeed(S4);
+	ClearLine(LCD_LINE6);
+	TextOut(5, LCD_LINE6, "Main");
+	Wait(1000);
+	start lijnvolger;
 }
