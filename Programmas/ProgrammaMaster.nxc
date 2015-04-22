@@ -167,7 +167,7 @@ void SteenOntwijkenMetUS()
 		//Rij totdat de afstand groter wordt+ een beetje extra
 		OnRevSync(OUT_AC, 50, 0);
 		until(US_R > afstand+5);
-        Wait(500);
+		Wait(500);
         
         //Draai naar rechts
 		OnRev(OUT_A, 40);
@@ -216,7 +216,7 @@ void SteenOntwijkenMetUS()
 		//Rij totdat de afstand groter wordt+ een beetje extra
 		OnRevSync(OUT_AC, 50, 0);
 		until(US_L > afstand+5);
-        Wait(500);
+		Wait(500);
 
         //Draai naar links
 		OnRev(OUT_A, -40);
@@ -386,7 +386,6 @@ task BlikjeZoeken()
 
 task lijnvolger()
 {
-	//int temp;
 	int t0_L;
 	int t0_R;
 	OnRev(OUT_B, -80);
@@ -409,12 +408,12 @@ task lijnvolger()
 		}
 		//Kruispunt
 		if(abs((CurrentTick()-t0_L)-(CurrentTick()-t0_R)) < 50 && abs((CurrentTick()-t0_L)-(CurrentTick()-t0_R)) !=0)
-	    {
+		{
 			Off(OUT_AB);
 			OnRev(OUT_C, 100);
 			Wait(250);
-	    }
-	    //Te links van lijn
+		}
+		//Te rechts van lijn
 		if(LICHT_L <= ZWART_L)
 		{
 			t0_L = CurrentTick();
@@ -422,7 +421,7 @@ task lijnvolger()
 			OnRev(OUT_C, 50);
 			OnRev(OUT_B, -60);
 		}
-		//Te links
+		//Te links van lijn
 		if(LICHT_R <= ZWART_R)
 		{
 			t0_R = CurrentTick();
@@ -435,7 +434,6 @@ task lijnvolger()
 			OnRevSync(OUT_AC, 70, 0);
 			OnRev(OUT_B, -70);
 		}
-		//temp=abs((CurrentTick()-t0_L)-(CurrentTick()-t0_L));
 	}
 }
 
